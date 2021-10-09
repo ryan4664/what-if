@@ -12,4 +12,4 @@ A what if game pitting impossible heroes against one another.
 - Node
 - GraphQL (Apollo)
 - Postgres
-- DB
+- DB (Prisma)
