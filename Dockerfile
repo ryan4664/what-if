@@ -5,6 +5,6 @@ COPY . ./
 
 COPY package.json .
 
-RUN npm install -g
+RUN npm install -g prisma
 
 CMD ["./bin/boot.sh"]

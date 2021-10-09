@@ -1,4 +1,7 @@
 import { ApolloServer, gql } from "apollo-server";
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 const books = [
   {
@@ -32,6 +35,15 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 
 // The `listen` method launches a web server.
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}, you get it!!!`);
-});
+server
+  .listen()
+  .then(async ({ url }) => {
+    console.log(`🚀  Server ready at ${url}, you get it!!!`);
+
+    const allUsers = await prisma.user.findMany()
+    console.log(allUsers)
+
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
