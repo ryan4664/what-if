@@ -1,0 +1,22 @@
+{
+  "name": "what-if",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "repository": "git@github.com:ryan4664/what-if.git",
+  "author": "Ryan Donohue <ryan@rdonohue.ca>",
+  "license": "MIT",
+  "start": "node dist/index.js",
+  "scripts": {
+    "watch": "nodemon --watch 'src/' --watch 'bin/' -e js,ts,json --ignore '**/__tests__/*' --exec 'yarn build' --on-change-only",
+    "start": "nodemon --ext js,proto --watch 'dist/' --delay 2 --inspect=4017 dist/index.js",
+    "build": "tsc --incremental"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3",
+    "nodemon": "^1.17.2"
+  },
+  "dependencies": {
+    "apollo-server": "^3.3.0",
+    "graphql": "^15.6.1"
+  }
+}
