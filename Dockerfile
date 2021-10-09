@@ -5,4 +5,6 @@ COPY . ./
 
 COPY package.json .
 
+RUN npm install -g
+
 CMD ["./bin/boot.sh"]

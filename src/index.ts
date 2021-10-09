@@ -1,15 +1,15 @@
 import { ApolloServer, gql } from "apollo-server";
 
 const books = [
-    {
-      title: 'The Awakening',
-      author: 'Kate Chopin',
-    },
-    {
-      title: 'City of Glass',
-      author: 'Paul Auster',
-    },
-  ];
+  {
+    title: "The Awakening",
+    author: "Kate Chopin",
+  },
+  {
+    title: "City of Glass",
+    author: "Paul Auster",
+  },
+];
 
 const typeDefs = gql`
   type Book {
@@ -23,10 +23,10 @@ const typeDefs = gql`
 `;
 
 const resolvers = {
-    Query: {
-      books: () => books,
-    },
-  };
+  Query: {
+    books: () => books,
+  },
+};
 
 // definition and your set of resolvers.
 const server = new ApolloServer({ typeDefs, resolvers });

@@ -5,9 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-        - ./:/app
-  # postgres:
-    # image: postgres:9.6.2-alpine
-    # environment:
-    #   POSTGRES_USER: ryan
-    #   POSTGRES_DB: test
+      - ./:/app
+    environment:
+      DATABASE_URL: postgresql://ryan:mcu@db:5432/whatif?schema=public
+  db:
+    image: postgres:14.0-alpine
+    environment:
+      POSTGRES_USER: ryan
+      POSTGRES_PASSWORD: mcu
+      POSTGRES_DB: whatif
+    ports:
+      - "5432:5432"

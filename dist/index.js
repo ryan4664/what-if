@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_1 = require("apollo-server");
 const books = [
     {
-        title: 'The Awakening',
-        author: 'Kate Chopin',
+        title: "The Awakening",
+        author: "Kate Chopin",
     },
     {
-        title: 'City of Glass',
-        author: 'Paul Auster',
+        title: "City of Glass",
+        author: "Paul Auster",
     },
 ];
 const typeDefs = (0, apollo_server_1.gql) `
