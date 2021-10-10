@@ -1,6 +1,7 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
+import { getHeros } from "./services/heros/HeroService";
 
 const typeDefs = gql`
   type Hero {
@@ -14,8 +15,8 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    heros: async (parent, args, {dataSources}: {dataSources: any}, info) => {
-      return await dataSources.store.store.hero.findMany()
+    heros: async (parent, args, context, info) => {
+      return getHeros({parent, args, context, info});
     },
   },
 };

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_1 = require("apollo-server");
 const client_1 = require("@prisma/client");
 const types_1 = require("./types");
+const HeroService_1 = require("./services/heros/HeroService");
 const typeDefs = (0, apollo_server_1.gql) `
   type Hero {
     multiverse: String
@@ -23,8 +24,8 @@ const typeDefs = (0, apollo_server_1.gql) `
 `;
 const resolvers = {
     Query: {
-        heros: (parent, args, { dataSources }, info) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield dataSources.store.store.hero.findMany();
+        heros: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
+            return (0, HeroService_1.getHeros)({ parent, args, context, info });
         }),
     },
 };

@@ -5,7 +5,7 @@ const apollo_datasource_1 = require("apollo-datasource");
 class Store extends apollo_datasource_1.DataSource {
     constructor(db) {
         super();
-        this.store = db;
+        this.prisma = db;
     }
     initialize(config) {
         this.context = config.context;

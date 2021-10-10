@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { DataSource } from "apollo-datasource";
 
 export class Store extends DataSource {
-  store: PrismaClient;
+  prisma: PrismaClient;
 
   context: Object;
 
@@ -10,11 +10,22 @@ export class Store extends DataSource {
 
   constructor(db: PrismaClient) {
     super();
-    this.store = db;
+    this.prisma = db;
   }
 
   initialize(config) {
     this.context = config.context;
     this.cache = config.cache;
   }
+}
+
+export interface IResolverArgs {
+  parent: any;
+  args: any;
+  context: {
+    dataSources: {
+      store: Store
+    }
+  };
+  info: any;
 }
