@@ -1,16 +1,24 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
-import { create, getHeros } from "./services/heros/HeroService";
+import { create, getHeros } from "./services/HeroService";
+import { getAttributes } from "./services/AttributeService";
 
 const typeDefs = gql`
   type Hero {
+    id: String
     multiverse: String
+    name: String
+  }
+
+  type Attribute {
+    id: String
     name: String
   }
 
   type Query {
     heros: [Hero!]!
+    attributes: [Attribute!]!
   }
 
   type Mutation {
@@ -22,6 +30,9 @@ const resolvers = {
   Query: {
     heros: async (parent, args, context, info) => {
       return await getHeros({ parent, args, context, info });
+    },
+    attributes: async (parent, args, context, info) => {
+      return await getAttributes({ parent, args, context, info });
     },
   },
   Mutation: {
@@ -45,7 +56,6 @@ const createStore = async function () {
 const main = async () => {
   let db = await createStore();
 
-  // definition and your set of resolvers.
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -55,7 +65,6 @@ const main = async () => {
     context: ({ req }) => {},
   });
 
-  // The `listen` method launches a web server.
   server
     .listen({ port: 4000 })
     .then(async ({ url }) => {

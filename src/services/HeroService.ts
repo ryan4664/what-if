@@ -11,7 +11,7 @@ export const create = async ({
   context,
 }: IResolverArgs): Promise<Hero> => {
   const { name } = args;
-  let newHero: Hero = {
+  let newHero = {
     name: name,
     multiverse: uuidv1(),
   };

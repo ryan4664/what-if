@@ -12,15 +12,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_1 = require("apollo-server");
 const client_1 = require("@prisma/client");
 const types_1 = require("./types");
-const HeroService_1 = require("./services/heros/HeroService");
+const HeroService_1 = require("./services/HeroService");
+const AttributeService_1 = require("./services/AttributeService");
 const typeDefs = (0, apollo_server_1.gql) `
   type Hero {
+    id: String
     multiverse: String
+    name: String
+  }
+
+  type Attribute {
+    id: String
     name: String
   }
 
   type Query {
     heros: [Hero!]!
+    attributes: [Attribute!]!
   }
 
   type Mutation {
@@ -31,6 +39,9 @@ const resolvers = {
     Query: {
         heros: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
             return yield (0, HeroService_1.getHeros)({ parent, args, context, info });
+        }),
+        attributes: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield (0, AttributeService_1.getAttributes)({ parent, args, context, info });
         }),
     },
     Mutation: {
@@ -53,7 +64,6 @@ const createStore = function () {
 };
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     let db = yield createStore();
-    // definition and your set of resolvers.
     const server = new apollo_server_1.ApolloServer({
         typeDefs,
         resolvers,
@@ -62,7 +72,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         }),
         context: ({ req }) => { },
     });
-    // The `listen` method launches a web server.
     server
         .listen({ port: 4000 })
         .then(({ url }) => __awaiter(void 0, void 0, void 0, function* () {

@@ -4,11 +4,19 @@ import { v1 as uuidv1 } from "uuid";
 const prisma = new PrismaClient();
 
 async function main() {
-  [1,2,3,4,5,6].map(async (x) => {
+  [1, 2, 3, 4, 5, 6].map(async (x) => {
+    const uuid = uuidv1();
+
     await prisma.hero.create({
       data: {
-        multiverse: uuidv1(),
-        name: `Hero-${x}`
+        multiverse: uuid,
+        name: `Hero-${x}`,
+      },
+    });
+
+    await prisma.attribute.create({
+      data: {
+        name: `Attribute-${x}`,
       },
     });
   });
