@@ -1,49 +1,60 @@
 import { ApolloServer, gql } from "apollo-server";
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
-
-const books = [
-  {
-    title: "The Awakening",
-    author: "Kate Chopin",
-  },
-  {
-    title: "City of Glass",
-    author: "Paul Auster",
-  },
-];
+import { PrismaClient } from "@prisma/client";
+import { Store } from "./types";
 
 const typeDefs = gql`
-  type Book {
-    title: String
-    author: String
+  type Hero {
+    multiverse: String
   }
 
   type Query {
-    books: [Book]
+    heros: [Hero]
   }
 `;
 
 const resolvers = {
   Query: {
-    books: () => books,
+    heros: async (parent, args, {dataSources}: {dataSources: any}, info) => {
+      return await dataSources.store.store.hero.findMany()
+    },
   },
 };
 
-// definition and your set of resolvers.
-const server = new ApolloServer({ typeDefs, resolvers });
 
-// The `listen` method launches a web server.
-server
-  .listen()
-  .then(async ({ url }) => {
-    console.log(`🚀  Server ready at ${url}, you get it!!!`);
-
-    const allUsers = await prisma.user.findMany()
-    console.log(allUsers)
-
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
+const createStore = async function () {
+  return new PrismaClient({
+    log: [
+      {
+        level: "query",
+        emit: "stdout",
+      },
+    ],
   });
+};
+
+
+const main = async () => {
+  let db = await createStore();
+
+  // definition and your set of resolvers.
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => ({
+      store: new Store(db),
+    }),
+    context: ({ req }) => {},
+  });
+
+  // The `listen` method launches a web server.
+  server
+    .listen({port: 4000})
+    .then(async ({ url }) => {
+      console.log(`🚀  Server ready at ${url}, you get it!!!`);
+    })
+    .finally(async () => {
+      await db.$disconnect();
+    });
+};
+
+main();
