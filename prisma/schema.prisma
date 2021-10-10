@@ -9,11 +9,6 @@ datasource db {
 }
 
 model Hero {
-  multiverse  String  @unique @db.Uuid
+  multiverse String @unique @db.Uuid
+  name String @db.VarChar(250)
 }
-
-
-
-// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model test {
-// }

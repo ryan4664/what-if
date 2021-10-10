@@ -1,26 +1,35 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
-import { getHeros } from "./services/heros/HeroService";
+import { create, getHeros } from "./services/heros/HeroService";
 
 const typeDefs = gql`
   type Hero {
     multiverse: String
+    name: String
   }
 
   type Query {
-    heros: [Hero]
+    heros: [Hero!]!
+  }
+
+  type Mutation {
+    createHero(name: String!): Hero!
   }
 `;
 
 const resolvers = {
   Query: {
     heros: async (parent, args, context, info) => {
-      return getHeros({parent, args, context, info});
+      return await getHeros({ parent, args, context, info });
+    },
+  },
+  Mutation: {
+    createHero: async (parent, args, context, info) => {
+      return await create({ parent, args, context, info });
     },
   },
 };
-
 
 const createStore = async function () {
   return new PrismaClient({
@@ -32,7 +41,6 @@ const createStore = async function () {
     ],
   });
 };
-
 
 const main = async () => {
   let db = await createStore();
@@ -49,7 +57,7 @@ const main = async () => {
 
   // The `listen` method launches a web server.
   server
-    .listen({port: 4000})
+    .listen({ port: 4000 })
     .then(async ({ url }) => {
       console.log(`🚀  Server ready at ${url}, you get it!!!`);
     })

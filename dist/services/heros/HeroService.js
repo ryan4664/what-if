@@ -9,9 +9,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHeros = void 0;
+exports.create = exports.getHeros = void 0;
+const uuid_1 = require("uuid");
 const getHeros = ({ context }) => __awaiter(void 0, void 0, void 0, function* () {
-    return context.dataSources.store.prisma.hero.findMany();
+    return yield context.dataSources.store.prisma.hero.findMany();
 });
 exports.getHeros = getHeros;
+const create = ({ args, context, }) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name } = args;
+    let newHero = {
+        name: name,
+        multiverse: (0, uuid_1.v1)(),
+    };
+    let result = yield context.dataSources.store.prisma.hero.create({
+        data: newHero,
+    });
+    return result;
+});
+exports.create = create;
 //# sourceMappingURL=HeroService.js.map

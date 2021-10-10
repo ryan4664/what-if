@@ -16,16 +16,26 @@ const HeroService_1 = require("./services/heros/HeroService");
 const typeDefs = (0, apollo_server_1.gql) `
   type Hero {
     multiverse: String
+    name: String
   }
 
   type Query {
-    heros: [Hero]
+    heros: [Hero!]!
+  }
+
+  type Mutation {
+    createHero(name: String!): Hero!
   }
 `;
 const resolvers = {
     Query: {
         heros: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
-            return (0, HeroService_1.getHeros)({ parent, args, context, info });
+            return yield (0, HeroService_1.getHeros)({ parent, args, context, info });
+        }),
+    },
+    Mutation: {
+        createHero: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield (0, HeroService_1.create)({ parent, args, context, info });
         }),
     },
 };

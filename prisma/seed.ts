@@ -4,10 +4,11 @@ import { v1 as uuidv1 } from "uuid";
 const prisma = new PrismaClient();
 
 async function main() {
-  [...Array(10)].map(async (x) => {
+  [1,2,3,4,5,6].map(async (x) => {
     await prisma.hero.create({
       data: {
         multiverse: uuidv1(),
+        name: `Hero-${x}`
       },
     });
   });
