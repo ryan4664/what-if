@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@prisma/client": "^3.2.1",
+    "@types/uuid": "^8.3.1",
     "apollo-server": "^3.3.0",
     "graphql": "^15.6.1",
     "uuid": "^8.3.2"

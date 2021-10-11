@@ -39,12 +39,8 @@ const resolvers = {
   },
   Mutation: {
     createHero: async (_, args, context, __) => {
-      try {
-        const service = new HeroService(context.dataSources.store.prisma);
-        return await service.create(args);
-      } catch (error) {
-        console.log(error);
-      }
+      const service = new HeroService(context.dataSources.store.prisma);
+      return await service.create(args);
     },
   },
 };

@@ -1,4 +1,4 @@
-import { Hero, PrismaClient } from ".prisma/client";
+import { Hero, Prisma, PrismaClient } from "@prisma/client";
 import { v1 as uuidv1 } from "uuid";
 export class HeroService {
   prisma: PrismaClient;
@@ -14,8 +14,7 @@ export class HeroService {
   public create = async (args): Promise<Hero> => {
     const { name } = args;
 
-    let newHero: Hero = {
-      id: uuidv1(),
+    let newHero: Prisma.HeroCreateInput = {
       name: name,
       multiverse: uuidv1(),
     };
