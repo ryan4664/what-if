@@ -38,7 +38,8 @@ const typeDefs = (0, apollo_server_1.gql) `
 const resolvers = {
     Query: {
         heros: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield (0, HeroService_1.getHeros)({ parent, args, context, info });
+            const heroService = new HeroService_1.HeroService(context.dataSources.store.prisma);
+            return yield heroService.getHeros();
         }),
         attributes: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
             return yield (0, AttributeService_1.getAttributes)({ parent, args, context, info });

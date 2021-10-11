@@ -1,7 +1,7 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
-import { create, getHeros } from "./services/HeroService";
+import { create, getHeros, HeroService } from "./services/HeroService";
 import { getAttributes } from "./services/AttributeService";
 
 const typeDefs = gql`
@@ -29,7 +29,8 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     heros: async (parent, args, context, info) => {
-      return await getHeros({ parent, args, context, info });
+      const heroService = new HeroService(context.dataSources.store.prisma);
+      return await heroService.getHeros();
     },
     attributes: async (parent, args, context, info) => {
       return await getAttributes({ parent, args, context, info });

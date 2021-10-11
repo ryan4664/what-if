@@ -24,8 +24,8 @@ export interface IResolverArgs {
   args: any;
   context: {
     dataSources: {
-      store: Store
-    }
+      store: Store;
+    };
   };
   info: any;
 }

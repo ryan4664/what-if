@@ -1,47 +1,51 @@
-import { Hero } from ".prisma/client";
+import { Hero, PrismaClient } from ".prisma/client";
 import { IResolverArgs } from "src/types";
 import { v1 as uuidv1 } from "uuid";
 
-export const getHeros = async ({ context }: IResolverArgs): Promise<Hero[]> => {
-  return await context.dataSources.store.prisma.hero.findMany();
-};
+export class HeroService {
+  prisma: PrismaClient;
 
-export const create = async ({
-  args,
-  context,
-}: IResolverArgs): Promise<Hero> => {
-  const { name } = args;
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
-  let newHero: Hero = {
-    id: uuidv1(),
-    name: name,
-    multiverse: uuidv1(),
+  public getHeros = async (): Promise<Hero[]> => {
+    return await this.prisma.hero.findMany();
   };
 
-  const attributes =
-    await context.dataSources.store.prisma.attribute.findMany();
+  public create = async ({ args, context }: IResolverArgs): Promise<Hero> => {
+    const { name } = args;
 
-  let result = await context.dataSources.store.prisma.hero.create({
-    data: newHero,
-  });
+    let newHero: Hero = {
+      id: uuidv1(),
+      name: name,
+      multiverse: uuidv1(),
+    };
 
-  await context.dataSources.store.prisma.heroAttribute.create({
-    data: {
-      heroId: result.id,
-      attributeId: attributes[Math.floor(Math.random() * attributes.length)].id,
-    },
-  });
+    const attributes =
+      await context.dataSources.store.prisma.attribute.findMany();
 
-  result = await context.dataSources.store.prisma.hero.findUnique({
-    where: {
-      id: result.id,
-    },
-    include: {
-      attributes: true,
-    },
-  });
+    let result = await context.dataSources.store.prisma.hero.create({
+      data: newHero,
+    });
 
-  console.log(result);
+    await context.dataSources.store.prisma.heroAttribute.create({
+      data: {
+        heroId: result.id,
+        attributeId:
+          attributes[Math.floor(Math.random() * attributes.length)].id,
+      },
+    });
 
-  return result;
-};
+    result = await context.dataSources.store.prisma.hero.findUnique({
+      where: {
+        id: result.id,
+      },
+      include: {
+        attributes: true,
+      },
+    });
+
+    return result;
+  };
+}
