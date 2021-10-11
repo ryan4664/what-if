@@ -1,7 +1,5 @@
 import { Hero, PrismaClient } from ".prisma/client";
-import { IResolverArgs } from "src/types";
 import { v1 as uuidv1 } from "uuid";
-
 export class HeroService {
   prisma: PrismaClient;
 
@@ -13,7 +11,7 @@ export class HeroService {
     return await this.prisma.hero.findMany();
   };
 
-  public create = async ({ args, context }: IResolverArgs): Promise<Hero> => {
+  public create = async (args): Promise<Hero> => {
     const { name } = args;
 
     let newHero: Hero = {
@@ -22,14 +20,13 @@ export class HeroService {
       multiverse: uuidv1(),
     };
 
-    const attributes =
-      await context.dataSources.store.prisma.attribute.findMany();
+    const attributes = await this.prisma.attribute.findMany();
 
-    let result = await context.dataSources.store.prisma.hero.create({
+    let result = await this.prisma.hero.create({
       data: newHero,
     });
 
-    await context.dataSources.store.prisma.heroAttribute.create({
+    await this.prisma.heroAttribute.create({
       data: {
         heroId: result.id,
         attributeId:
@@ -37,7 +34,7 @@ export class HeroService {
       },
     });
 
-    result = await context.dataSources.store.prisma.hero.findUnique({
+    result = await this.prisma.hero.findUnique({
       where: {
         id: result.id,
       },

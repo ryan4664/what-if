@@ -1,8 +1,12 @@
-import { Attribute } from ".prisma/client";
-import { IResolverArgs } from "src/types";
+import { Attribute, PrismaClient } from ".prisma/client";
+export class AttributeService {
+  prisma: PrismaClient;
 
-export const getAttributes = async ({
-  context,
-}: IResolverArgs): Promise<Attribute[]> => {
-  return await context.dataSources.store.prisma.attribute.findMany();
-};
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
+  public getAttributes = async (): Promise<Attribute[]> => {
+    return await this.prisma.attribute.findMany();
+  };
+}

@@ -1,8 +1,8 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
-import { create, getHeros, HeroService } from "./services/HeroService";
-import { getAttributes } from "./services/AttributeService";
+import { HeroService } from "./services/HeroService";
+import { AttributeService } from "./services/AttributeService";
 
 const typeDefs = gql`
   type Hero {
@@ -28,17 +28,23 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    heros: async (parent, args, context, info) => {
-      const heroService = new HeroService(context.dataSources.store.prisma);
-      return await heroService.getHeros();
+    heros: async (_, args, context, __) => {
+      const service = new HeroService(context.dataSources.store.prisma);
+      return await service.getHeros();
     },
-    attributes: async (parent, args, context, info) => {
-      return await getAttributes({ parent, args, context, info });
+    attributes: async (_, args, context, __) => {
+      const service = new AttributeService(context.dataSources.store.prisma);
+      return await service.getAttributes();
     },
   },
   Mutation: {
-    createHero: async (parent, args, context, info) => {
-      return await create({ parent, args, context, info });
+    createHero: async (_, args, context, __) => {
+      try {
+        const service = new HeroService(context.dataSources.store.prisma);
+        return await service.create(args);
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
@@ -68,8 +74,8 @@ const main = async () => {
 
   server
     .listen({ port: 4000 })
-    .then(async ({ url }) => {
-      console.log(`🚀  Server ready at ${url}, you get it!!!`);
+    .then(({ url }) => {
+      console.log(`🚀  Server ready at ${url}`);
     })
     .finally(async () => {
       await db.$disconnect();
