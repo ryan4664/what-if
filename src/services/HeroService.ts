@@ -33,6 +33,7 @@ export class HeroService {
       },
     });
 
+    // @ts-ignore
     result = await this.prisma.hero.findUnique({
       where: {
         id: result.id,

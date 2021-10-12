@@ -9,7 +9,8 @@
   "scripts": {
     "watch": "nodemon --watch 'src/' --watch 'bin/' -e js,ts,json --ignore '**/__tests__/*' --exec 'yarn build' --on-change-only",
     "start": "nodemon --ext js,proto --watch 'dist/' --delay 2 --inspect=4017 dist/index.js",
-    "build": "tsc --incremental"
+    "build": "tsc --incremental",
+    "test": "jest -i ./src/__tests__/services"
   },
   "devDependencies": {
     "nodemon": "^1.17.2",
@@ -18,9 +19,13 @@
   },
   "dependencies": {
     "@prisma/client": "^3.2.1",
+    "@types/jest": "^27.0.2",
     "@types/uuid": "^8.3.1",
     "apollo-server": "^3.3.0",
     "graphql": "^15.6.1",
+    "jest": "^27.2.5",
+    "jest-mock-extended": "^2.0.4",
+    "ts-jest": "^27.0.5",
     "uuid": "^8.3.2"
   },
   "prisma": {
