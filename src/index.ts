@@ -9,6 +9,7 @@ const typeDefs = gql`
     id: String
     multiverse: String
     name: String
+    attributes: [Attribute!]!
   }
 
   type Attribute {

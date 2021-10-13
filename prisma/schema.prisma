@@ -9,23 +9,22 @@ datasource db {
 }
 
 model Hero {
-  id         String          @id @default(uuid())
+  id         String          @id @default(uuid()) @db.Uuid
   multiverse String          @unique @db.Uuid
   name       String          @db.VarChar(250)
   attributes HeroAttribute[]
 }
 
 model HeroAttribute {
-  id                         String    @id @default(uuid())
-  heroId                     String    @db.Uuid
-  Hero                       Hero?     @relation(fields: [heroId_HeroToHeroAttribute], references: [id])
-  heroId_HeroToHeroAttribute String?
-  attriubute                 Attribute @relation(fields: [attributeId], references: [id])
-  attributeId                String
+  id          String    @id @default(uuid())
+  heroId      String    @db.Uuid
+  attributeId String    @db.Uuid
+  Hero        Hero      @relation(fields: [heroId], references: [id])
+  attriubute  Attribute @relation(fields: [attributeId], references: [id])
 }
 
 model Attribute {
-  id            String          @id @default(uuid())
+  id            String          @id @default(uuid()) @db.Uuid
   name          String          @db.VarChar(100)
   HeroAttribute HeroAttribute[]
 }
