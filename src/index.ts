@@ -9,12 +9,20 @@ const typeDefs = gql`
     id: String
     multiverse: String
     name: String
-    attributes: [Attribute!]!
+    attributes: [HeroAttribute]!
+    attributeName: String
   }
 
   type Attribute {
     id: String
     name: String
+  }
+
+  type HeroAttribute {
+    id: String
+    heroId: String
+    attributeId: String
+    attribute: Attribute
   }
 
   type Query {

@@ -10,7 +10,11 @@
     "watch": "nodemon --watch 'src/' --watch 'bin/' -e js,ts,json --ignore '**/__tests__/*' --exec 'yarn build' --on-change-only",
     "start": "nodemon --ext js,proto --watch 'dist/' --delay 2 --inspect=4017 dist/index.js",
     "build": "tsc --incremental",
-    "test": "jest -i ./src/__tests__/services"
+    "test": "jest -i ./src/__tests__/services",
+    "db:reset": "prisma migrate reset --skip-seed",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:clean": "yarn db:reset && yarn db:push && yarn db:seed"
   },
   "devDependencies": {
     "nodemon": "^1.17.2",
