@@ -18,10 +18,13 @@ async function main() {
   ];
 
   const inserts = seedData.map(async (x) => {
+    let user = await prisma.user.create({ data: {} });
+
     await prisma.hero.create({
       data: {
         multiverse: uuidv1(),
         name: x.name,
+        userId: user.id,
       },
     });
 
