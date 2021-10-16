@@ -12,6 +12,26 @@ A what if game pitting impossible heroes against one another.
         - If we have run out of possibilities of unique traits, the system needs
             to be smart enough to create it's a new property, having an infinite amount
             of possibilites 
+- Heros will be purchased with time shards from The Watcher
+- Faction system / alignment
+    - superhero or super villian
+    - heros will come through time poratls
+
+## POC
+    - Authentication
+        - simple username and password
+        - A user can purchase a new hero with currency
+    - Store
+        - named the watcher
+        - currency is time shards 
+        - users will start with enough currency to generate a portal
+    - One on One PvP
+        - no user control
+        - similar to auto chess
+    - Progression   
+        - account xp
+        - hero xp
+        - level tier
 
 ## Tech stack
 
