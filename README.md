@@ -44,3 +44,4 @@ A what if game pitting impossible heroes against one another.
 
 ## Env
 - http://137.184.216.37:4000/
+- https://whynotga.me/
