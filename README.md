@@ -39,3 +39,8 @@ A what if game pitting impossible heroes against one another.
 - Node
 - GraphQL (Apollo)
 - Postgres (Prisma)
+- nginx
+- Digital Ocean
+
+## Env
+- http://137.184.216.37:4000/

@@ -1,4 +1,4 @@
-import { Hero, Prisma, PrismaClient } from "@prisma/client";
+import { Hero, Prisma, PrismaClient, User } from "@prisma/client";
 import { v1 as uuidv1 } from "uuid";
 export class HeroService {
   prisma: PrismaClient;
@@ -10,7 +10,7 @@ export class HeroService {
   public getHeros = async (): Promise<any> => {
     let results = await this.prisma.hero.findMany({
       include: {
-        attributes: {
+        heroAttributes: {
           include: {
             attriubute: true,
           },
@@ -20,25 +20,30 @@ export class HeroService {
 
     return results.map((x) => ({
       ...x,
-      attributeName: x.attributes[0].attriubute.name,
+      attributeName: x.heroAttributes[0].attriubute.name,
     }));
   };
 
   public create = async (args): Promise<Hero> => {
-    const { name } = args;
+    const { name, userId } = args;
 
     const attributes = await this.prisma.attribute.findMany();
 
     let newHero: Prisma.HeroCreateInput = {
       name: name,
       multiverse: uuidv1(),
-      attributes: {
+      heroAttributes: {
         create: [
           {
             attributeId:
               attributes[Math.floor(Math.random() * attributes.length)].id,
           },
         ],
+      },
+      user: {
+        connect: {
+          id: userId,
+        },
       },
     };
 

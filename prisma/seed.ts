@@ -18,7 +18,9 @@ async function main() {
   ];
 
   const inserts = seedData.map(async (x) => {
-    let user = await prisma.user.create({ data: {} });
+    const user = await prisma.user.create({ data: {
+      timeShards: 100
+    } });
 
     await prisma.hero.create({
       data: {
