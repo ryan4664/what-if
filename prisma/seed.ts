@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { mock } from "jest-mock-extended";
 import { v1 as uuidv1 } from "uuid";
 
 const prisma = new PrismaClient();
@@ -19,11 +18,13 @@ async function main() {
   ];
 
   const inserts = seedData.map(async (x) => {
-    const user = await prisma.user.create({ data: {
-      emailAddress: `${x}@whynotga.me`,
-      password: `${x}`,
-      timeShards: 100
-    } });
+    const user = await prisma.user.create({
+      data: {
+        emailAddress: `${uuidv1()}@whynotga.me`,
+        password: `${x}`,
+        timeShards: 100,
+      },
+    });
 
     await prisma.hero.create({
       data: {

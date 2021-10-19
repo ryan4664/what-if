@@ -1,4 +1,4 @@
-import { Hero, Prisma, PrismaClient, User } from "@prisma/client";
+import { Hero, Prisma, PrismaClient } from "@prisma/client";
 import { v1 as uuidv1 } from "uuid";
 export class HeroService {
   prisma: PrismaClient;

@@ -3,10 +3,11 @@ import { PrismaClient } from "@prisma/client";
 import { Store } from "./types";
 import { HeroService } from "./services/HeroService";
 import { AttributeService } from "./services/AttributeService";
+import { UserService } from "./services/UserService";
 
 const typeDefs = gql`
   type Hero {
-    id: String
+    id: ID
     multiverse: String
     name: String
     attributes: [HeroAttribute]!
@@ -14,24 +15,35 @@ const typeDefs = gql`
   }
 
   type Attribute {
-    id: String
+    id: ID
     name: String
   }
 
   type HeroAttribute {
-    id: String
+    id: ID
     heroId: String
     attributeId: String
     attribute: Attribute
   }
 
+  type User {
+    id: ID
+    emailAddress: String
+    password: String
+    timeShards: Int
+    heros: [Hero!]!
+  }
+
   type Query {
     heros: [Hero!]!
     attributes: [Attribute!]!
+    user(userId: ID!): User
+    users: [User!]!
   }
 
   type Mutation {
     createHero(name: String!): Hero!
+    purchaseHero(userId: ID!, heroName: String): ID
   }
 `;
 
@@ -45,11 +57,27 @@ const resolvers = {
       const service = new AttributeService(context.dataSources.store.prisma);
       return await service.getAttributes();
     },
+    user: async (_, args, context, __) => {
+      const service = new UserService(context.dataSources.store.prisma);
+      console.log(args);
+      return await service.getUser({ userId: args.userId });
+    },
+    users: async (_, args, context, __) => {
+      const service = new UserService(context.dataSources.store.prisma);
+      return await service.getUsers();
+    },
   },
   Mutation: {
     createHero: async (_, args, context, __) => {
       const service = new HeroService(context.dataSources.store.prisma);
       return await service.create(args);
+    },
+    purchaseHero: async (_, args, context, __) => {
+      const service = new UserService(context.dataSources.store.prisma);
+      return await service.purchaseHero({
+        userId: args.userId,
+        heroName: args.heroName,
+      });
     },
   },
 };
