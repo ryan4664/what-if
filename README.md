@@ -1,4 +1,4 @@
-# what-if
+# why-not
 
 ## Premise
 A what if game pitting impossible heroes against one another.
