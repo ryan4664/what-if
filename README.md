@@ -15,7 +15,7 @@ A what if game pitting impossible heroes against one another.
 - Heros will be purchased with time shards from The Watcher
 - Faction system / alignment
     - superhero or super villian
-    - heros will come through time poratls
+    - heros will come through time portals
 
 ## POC
     - Authentication
