@@ -1,5 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import { HeroService } from "./HeroService";
+import bcrypt from "bcryptjs";
 
 export class UserService {
   prisma: PrismaClient;
@@ -37,11 +38,14 @@ export class UserService {
 
   public create = async (args): Promise<User> => {
     const { emailAddress, password } = args;
+    
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     return await this.prisma.user.create({
       data: {
         emailAddress,
-        password,
+        password: hashedPassword,
         timeShards: 100,
       },
     });
