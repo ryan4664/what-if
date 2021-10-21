@@ -17,13 +17,14 @@ model User {
 }
 
 model Hero {
-  id             String          @id @default(uuid()) @db.Uuid
-  multiverse     String          @unique @db.Uuid
-  name           String          @db.VarChar(250)
-  userId         String          @db.Uuid
-  user           User            @relation(fields: [userId], references: [id])
-  heroAttributes HeroAttribute[]
-
+  id                String          @id @default(uuid()) @db.Uuid
+  multiverse        String          @unique @db.Uuid
+  name              String          @db.VarChar(250)
+  userId            String          @db.Uuid
+  currentLevel      Int             @default(1) @db.Integer
+  currentExperience Int             @default(1) @db.Integer
+  user              User            @relation(fields: [userId], references: [id])
+  heroAttributes    HeroAttribute[]
 }
 
 model HeroAttribute {
@@ -38,4 +39,10 @@ model Attribute {
   id             String          @id @default(uuid()) @db.Uuid
   name           String          @db.VarChar(100)
   heroAttributes HeroAttribute[]
+}
+
+model LevelTiers {
+  id            String @id @default(uuid())
+  level         Int    @db.Integer
+  minExperience Int    @db.Integer
 }

@@ -59,7 +59,18 @@ async function main() {
     attributes.splice(attributeIndex, 1);
   });
 
-  await Promise.all(updates);
+  const levels = [1, 2, 3, 4, 5];
+
+  const levelPromises = levels.map(async (x) => {
+    await prisma.levelTiers.create({
+      data: {
+        level: x,
+        minExperience: x === 1 ? 0 : x ** 3 * 1000,
+      },
+    });
+  });
+
+  await Promise.all([...updates, ...levelPromises]);
 }
 
 main()
