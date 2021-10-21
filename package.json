@@ -14,9 +14,17 @@
     "db:reset": "prisma migrate reset --skip-seed",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:clean": "yarn db:reset && yarn db:push && yarn db:seed"
+    "db:clean": "yarn db:reset && yarn db:push && yarn db:seed",
+    "lint": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
     "nodemon": "^1.17.2",
     "prism": "^4.1.2",
     "typescript": "^4.4.3"

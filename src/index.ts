@@ -1,9 +1,9 @@
-import { ApolloServer, gql } from "apollo-server";
-import { PrismaClient } from "@prisma/client";
-import { Store } from "./types";
-import { HeroService } from "./services/HeroService";
-import { AttributeService } from "./services/AttributeService";
-import { UserService } from "./services/UserService";
+import { ApolloServer, gql } from 'apollo-server'
+import { PrismaClient } from '@prisma/client'
+import { Store } from './types'
+import { HeroService } from './services/HeroService'
+import { AttributeService } from './services/AttributeService'
+import { UserService } from './services/UserService'
 
 const typeDefs = gql`
   type Hero {
@@ -45,74 +45,74 @@ const typeDefs = gql`
     createHero(name: String!): Hero!
     purchaseHero(userId: ID!, heroName: String): ID
   }
-`;
+`
 
 const resolvers = {
   Query: {
     heros: async (_, args, context, __) => {
-      const service = new HeroService(context.dataSources.store.prisma);
-      return await service.getHeros();
+      const service = new HeroService(context.dataSources.store.prisma)
+      return await service.getHeros()
     },
     attributes: async (_, args, context, __) => {
-      const service = new AttributeService(context.dataSources.store.prisma);
-      return await service.getAttributes();
+      const service = new AttributeService(context.dataSources.store.prisma)
+      return await service.getAttributes()
     },
     user: async (_, args, context, __) => {
-      const service = new UserService(context.dataSources.store.prisma);
-      console.log(args);
-      return await service.getUser({ userId: args.userId });
+      const service = new UserService(context.dataSources.store.prisma)
+      console.log(args)
+      return await service.getUser({ userId: args.userId })
     },
     users: async (_, args, context, __) => {
-      const service = new UserService(context.dataSources.store.prisma);
-      return await service.getUsers();
-    },
+      const service = new UserService(context.dataSources.store.prisma)
+      return await service.getUsers()
+    }
   },
   Mutation: {
     createHero: async (_, args, context, __) => {
-      const service = new HeroService(context.dataSources.store.prisma);
-      return await service.create(args);
+      const service = new HeroService(context.dataSources.store.prisma)
+      return await service.create(args)
     },
     purchaseHero: async (_, args, context, __) => {
-      const service = new UserService(context.dataSources.store.prisma);
+      const service = new UserService(context.dataSources.store.prisma)
       return await service.purchaseHero({
         userId: args.userId,
-        heroName: args.heroName,
-      });
-    },
-  },
-};
+        heroName: args.heroName
+      })
+    }
+  }
+}
 
 const createStore = async function () {
   return new PrismaClient({
     log: [
       {
-        level: "query",
-        emit: "stdout",
-      },
-    ],
-  });
-};
+        level: 'query',
+        emit: 'stdout'
+      }
+    ]
+  })
+}
 
 const main = async () => {
-  let db = await createStore();
+  const db = await createStore()
 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     dataSources: () => ({
-      store: new Store(db),
+      store: new Store(db)
     }),
-    context: ({ req }) => {},
-  });
+    context: ({ req }) => {}
+  })
 
   server
     .listen({ port: 4000 })
     .then(({ url }) => {
-      console.log(`🚀  Server ready at ${url}`);
+      console.log(`🚀  Server ready at ${url}`)
     })
     .finally(async () => {
-      await db.$disconnect();
-    });
-};
+      await db.$disconnect()
+    })
+}
 
-main();
+main()
