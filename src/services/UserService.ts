@@ -1,6 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import { HeroService } from "./HeroService";
 import bcrypt from "bcryptjs";
+import mailgun from "mailgun";
 
 export class UserService {
   prisma: PrismaClient;
@@ -38,9 +39,19 @@ export class UserService {
 
   public create = async (args): Promise<User> => {
     const { emailAddress, password } = args;
-    
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    const DOMAIN = "https://api.mailgun.net/v3/sandbox6f752e3a2b5e4ff58f95acf1879963f2.mailgun.org";
+    const mg = mailgun({ apiKey: "key-ac4266fa6d7ea233b99e6459f78e4b6d", domain: DOMAIN });
+    const data = {
+      from: "Excited User <thewatcher@whynotga.me>",
+      to: "ryan@rdonohue.ca",
+      subject: "Hello",
+      text: "Testing some Mailgun awesomness!",
+    };
+    await mg.messages().send(data);
 
     return await this.prisma.user.create({
       data: {
