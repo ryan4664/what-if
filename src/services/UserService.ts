@@ -1,7 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import { HeroService } from "./HeroService";
 import bcrypt from "bcryptjs";
-import mailgun from "mailgun";
+// import mailgun from "mailgun";
 
 export class UserService {
   prisma: PrismaClient;

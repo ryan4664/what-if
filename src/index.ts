@@ -108,7 +108,13 @@ const main = async () => {
     dataSources: () => ({
       store: new Store(db),
     }),
-    context: ({ req }) => {},
+    context: ({ req }) => {
+      const token = req.headers.authorization || '';
+      if(token) {
+        console.log("token", token)
+      }
+    },
+
   });
 
   server
