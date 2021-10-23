@@ -1,10 +1,11 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
-import { Store } from "./types";
+import { IApolloContext, Store } from "./types";
 import { HeroService } from "./services/HeroService";
 import { AttributeService } from "./services/AttributeService";
 import { UserService } from "./services/UserService";
 import { AuthService } from "./services/AuthService";
+import { validateToken } from "./util";
 
 const typeDefs = gql`
   type Hero {
@@ -51,39 +52,45 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    heros: async (_, args, context, __) => {
+    heros: async (_, ___, context: IApolloContext, __) => {
       const service = new HeroService(context.dataSources.store.prisma);
       return await service.getHeros();
     },
-    attributes: async (_, args, context, __) => {
+    attributes: async (_, ___, context: IApolloContext, __) => {
       const service = new AttributeService(context.dataSources.store.prisma);
       return await service.getAttributes();
     },
-    user: async (_, args, context, __) => {
+    user: async (_, { userId }, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma);
-      console.log(args);
-      return await service.getUser({ userId: args.userId });
+      return await service.getUser({ userId });
     },
-    users: async (_, args, context, __) => {
+    users: async (_, ___, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma);
       return await service.getUsers();
     },
   },
   Mutation: {
-    login: async (_, { emailAddress, password }, context, __) => {
+    login: async (
+      _,
+      { emailAddress, password },
+      context: IApolloContext,
+      __
+    ) => {
       const service = new AuthService(context.dataSources.store.prisma);
       return await service.login({ emailAddress, password });
     },
-    createHero: async (_, args, context, __) => {
+    createHero: async (_, { userId }, context: IApolloContext, __) => {
       const service = new HeroService(context.dataSources.store.prisma);
-      return await service.create(args);
+      return await service.create({ userId });
     },
-    purchaseHero: async (_, args, context, __) => {
+    purchaseHero: async (
+      _,
+      { userId, heroName },
+      context: IApolloContext,
+      __
+    ) => {
       const service = new UserService(context.dataSources.store.prisma);
-      return await service.purchaseHero({
-        userId: args.userId,
-        heroName: args.heroName,
-      });
+      return await service.purchaseHero({ userId, heroName });
     },
   },
 };
@@ -109,12 +116,16 @@ const main = async () => {
       store: new Store(db),
     }),
     context: ({ req }) => {
-      const token = req.headers.authorization || '';
-      if(token) {
-        console.log("token", token)
+      const token = req.headers.authorization || "";
+      let user = {};
+      if (token) {
+        user = validateToken(token);
       }
-    },
 
+      return {
+        user,
+      };
+    },
   });
 
   server
