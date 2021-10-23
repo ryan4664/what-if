@@ -4,18 +4,36 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+interface IHeroSeed {
+  name: string;
+  ability: string;
+  moveNames: string[];
+}
+
 async function main() {
-  const seedData = [
-    { name: "Spiderman", abilility: "Spider webs" },
-    { name: "Superman", abilility: "Flying" },
-    { name: "Hulk", abilility: "Big green monster" },
-    { name: "Wolverine", abilility: "Metal claws" },
-    { name: "Capitan American", abilility: "Super soldier" },
-    { name: "Capitan Marvel", abilility: "Powered by infinity stone" },
-    { name: "Dr. Strange", abilility: "Can bend time" },
-    { name: "Black Widow", abilility: "Spy" },
-    { name: "Ironman", abilility: "Smart Suit" },
-    { name: "Deadpool", abilility: "Cannot die" },
+  const seedData: IHeroSeed[] = [
+    {
+      name: "Spiderman",
+      ability: "Spider webs",
+      moveNames: ["Web shot", "Restraint"],
+    },
+    { name: "Superman", ability: "Flying", moveNames: ["Air Slam", "Retreat"] },
+    { name: "Hulk", ability: "Big green monster", moveNames: ["Smash"] },
+    { name: "Wolverine", ability: "Metal claws", moveNames: ["Slice", "Stab"] },
+    {
+      name: "Capitan American",
+      ability: "Super soldier",
+      moveNames: ["Super punch"],
+    },
+    {
+      name: "Capitan Marvel",
+      ability: "Powered by infinity stone",
+      moveNames: ["Power beam", "Teleport"],
+    },
+    { name: "Dr. Strange", ability: "Can bend time", moveNames: ["Reversal"] },
+    { name: "Black Widow", ability: "Spy", moveNames: ["Invade", "Headshot"] },
+    { name: "Ironman", ability: "Smart Suit", moveNames: ["Rockets"] },
+    { name: "Deadpool", ability: "Cannot die", moveNames: ["Invincible"] },
   ];
 
   const inserts = seedData.map(async (x, index) => {
@@ -40,7 +58,18 @@ async function main() {
 
     await prisma.attribute.create({
       data: {
-        name: x.abilility,
+        name: x.ability,
+      },
+    });
+
+    await prisma.attribute.create({
+      data: {
+        name: x.ability,
+        moves: {
+          create: x.moveNames.map((x) => ({
+            name: x,
+          })),
+        },
       },
     });
   });

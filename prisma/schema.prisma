@@ -39,6 +39,16 @@ model Attribute {
   id             String          @id @default(uuid()) @db.Uuid
   name           String          @db.VarChar(100)
   heroAttributes HeroAttribute[]
+  moves          AttributeMove[]
+}
+
+model AttributeMove {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String    @default("DefaultMoveName") @db.VarChar(250)
+  attributeId String    @db.Uuid
+  attriubute  Attribute @relation(fields: [attributeId], references: [id])
+
+
 }
 
 model LevelTiers {
