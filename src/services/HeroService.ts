@@ -7,16 +7,28 @@ export class HeroService {
     this.prisma = prisma
   }
 
-  public getHeros = async (): Promise<any> => {
-    const results = await this.prisma.hero.findMany({
+  public getHeros = async (heroIds?: string[]): Promise<any> => {
+    var arg = {      
       include: {
-        heroAttributes: {
-          include: {
-            attriubute: true
-          }
+      heroAttributes: {
+        include: {
+          attriubute: true
         }
       }
-    })
+    }}
+
+    if (heroIds?.length) {
+      arg = {
+        where: {
+          id: {
+            in: heroIds
+          }
+        },
+        ...arg
+      }
+    }
+
+    const results = await this.prisma.hero.findMany(arg)
 
     return results.map((x) => ({
       ...x,
