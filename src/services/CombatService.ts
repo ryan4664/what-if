@@ -2,9 +2,9 @@ import { PrismaClient } from '@prisma/client'
 // import { v1 as uuidv1 } from 'uuid'
 
 export class CombatService {
-  prisma: PrismaClient;
+  prisma: PrismaClient
 
-  constructor (prisma: PrismaClient) {
+  constructor(prisma: PrismaClient) {
     this.prisma = prisma
   }
 

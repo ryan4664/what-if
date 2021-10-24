@@ -1,24 +1,26 @@
 import { Hero, Prisma, PrismaClient } from '@prisma/client'
 import { v1 as uuidv1 } from 'uuid'
 export class HeroService {
-  prisma: PrismaClient;
+  prisma: PrismaClient
 
-  constructor (prisma: PrismaClient) {
+  constructor(prisma: PrismaClient) {
     this.prisma = prisma
   }
 
   public getHeros = async (heroIds?: string[]): Promise<any> => {
-    var arg = {      
+    let arg = {
       include: {
-      heroAttributes: {
-        include: {
-          attriubute: true
+        heroAttributes: {
+          include: {
+            attriubute: true
+          }
         }
       }
-    }}
+    }
 
     if (heroIds?.length) {
       arg = {
+        // @ts-ignore
         where: {
           id: {
             in: heroIds
@@ -34,7 +36,7 @@ export class HeroService {
       ...x,
       attributeName: x.heroAttributes[0].attriubute.name
     }))
-  };
+  }
 
   public create = async (args): Promise<Hero> => {
     const { name, userId } = args
@@ -62,5 +64,5 @@ export class HeroService {
     return await this.prisma.hero.create({
       data: newHero
     })
-  };
+  }
 }

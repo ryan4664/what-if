@@ -1,11 +1,11 @@
-import { ApolloServer, gql } from "apollo-server";
-import { PrismaClient } from "@prisma/client";
-import { IApolloContext, Store } from "./types";
-import { HeroService } from "./services/HeroService";
-import { AttributeService } from "./services/AttributeService";
-import { UserService } from "./services/UserService";
-import { AuthService } from "./services/AuthService";
-import { validateToken } from "./util";
+import { ApolloServer, gql } from 'apollo-server'
+import { PrismaClient } from '@prisma/client'
+import { IApolloContext, Store } from './types'
+import { HeroService } from './services/HeroService'
+import { AttributeService } from './services/AttributeService'
+import { UserService } from './services/UserService'
+import { AuthService } from './services/AuthService'
+import { validateToken } from './util'
 
 const typeDefs = gql`
   type Hero {
@@ -48,26 +48,26 @@ const typeDefs = gql`
     createHero(name: String!): Hero!
     purchaseHero(userId: ID!, heroName: String): ID
   }
-`;
+`
 
 const resolvers = {
   Query: {
     heros: async (_, ___, context: IApolloContext, __) => {
-      const service = new HeroService(context.dataSources.store.prisma);
-      return await service.getHeros();
+      const service = new HeroService(context.dataSources.store.prisma)
+      return await service.getHeros()
     },
     attributes: async (_, ___, context: IApolloContext, __) => {
-      const service = new AttributeService(context.dataSources.store.prisma);
-      return await service.getAttributes();
+      const service = new AttributeService(context.dataSources.store.prisma)
+      return await service.getAttributes()
     },
     user: async (_, { userId }, context: IApolloContext, __) => {
-      const service = new UserService(context.dataSources.store.prisma);
-      return await service.getUser({ userId });
+      const service = new UserService(context.dataSources.store.prisma)
+      return await service.getUser({ userId })
     },
     users: async (_, ___, context: IApolloContext, __) => {
-      const service = new UserService(context.dataSources.store.prisma);
-      return await service.getUsers();
-    },
+      const service = new UserService(context.dataSources.store.prisma)
+      return await service.getUsers()
+    }
   },
   Mutation: {
     login: async (
@@ -76,12 +76,12 @@ const resolvers = {
       context: IApolloContext,
       __
     ) => {
-      const service = new AuthService(context.dataSources.store.prisma);
-      return await service.login({ emailAddress, password });
+      const service = new AuthService(context.dataSources.store.prisma)
+      return await service.login({ emailAddress, password })
     },
     createHero: async (_, { userId }, context: IApolloContext, __) => {
-      const service = new HeroService(context.dataSources.store.prisma);
-      return await service.create({ userId });
+      const service = new HeroService(context.dataSources.store.prisma)
+      return await service.create({ userId })
     },
     purchaseHero: async (
       _,
@@ -89,53 +89,53 @@ const resolvers = {
       context: IApolloContext,
       __
     ) => {
-      const service = new UserService(context.dataSources.store.prisma);
-      return await service.purchaseHero({ userId, heroName });
-    },
-  },
-};
+      const service = new UserService(context.dataSources.store.prisma)
+      return await service.purchaseHero({ userId, heroName })
+    }
+  }
+}
 
 const createStore = async function () {
   return new PrismaClient({
     log: [
       {
-        level: "query",
-        emit: "stdout",
-      },
-    ],
-  });
-};
+        level: 'query',
+        emit: 'stdout'
+      }
+    ]
+  })
+}
 
 const main = async () => {
-  const db = await createStore();
+  const db = await createStore()
 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     dataSources: () => ({
-      store: new Store(db),
+      store: new Store(db)
     }),
     context: ({ req }) => {
-      const token = req.headers.authorization || "";
-      let user = {};
+      const token = req.headers.authorization || ''
+      let user = {}
       if (token) {
-        user = validateToken(token);
+        user = validateToken(token)
       }
 
       return {
-        user,
-      };
-    },
-  });
+        user
+      }
+    }
+  })
 
   server
     .listen({ port: 4000 })
     .then(({ url }) => {
-      console.log(`🚀  Server ready at ${url}`);
+      console.log(`🚀  Server ready at ${url}`)
     })
     .finally(async () => {
-      await db.$disconnect();
-    });
-};
+      await db.$disconnect()
+    })
+}
 
-main();
+main()
