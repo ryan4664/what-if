@@ -1,10 +1,10 @@
-import { Hero, Prisma, PrismaClient } from '@prisma/client'
-import { v1 as uuidv1 } from 'uuid'
+import { Hero, Prisma, PrismaClient } from "@prisma/client";
+import { v1 as uuidv1 } from "uuid";
 export class HeroService {
   prisma: PrismaClient;
 
-  constructor (prisma: PrismaClient) {
-    this.prisma = prisma
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
   }
 
   public getHeros = async (): Promise<any> => {
@@ -12,22 +12,37 @@ export class HeroService {
       include: {
         heroAttributes: {
           include: {
-            attriubute: true
-          }
-        }
-      }
-    })
+            attriubute: true,
+          },
+        },
+      },
+    });
 
     return results.map((x) => ({
       ...x,
-      attributeName: x.heroAttributes[0].attriubute.name
-    }))
+      attributeName: x.heroAttributes[0].attriubute.name,
+    }));
+  };
+
+  public getHero = async ({ heroId }): Promise<Hero | null> => {
+    return await this.prisma.hero.findUnique({
+      where: {
+        id: heroId,
+      },
+      include: {
+        heroAttributes: {
+          include: {
+            attriubute: true,
+          },
+        },
+      },
+    });
   };
 
   public create = async (args): Promise<Hero> => {
-    const { name, userId } = args
+    const { name, userId } = args;
 
-    const attributes = await this.prisma.attribute.findMany()
+    const attributes = await this.prisma.attribute.findMany();
 
     const newHero: Prisma.HeroCreateInput = {
       name: name,
@@ -36,19 +51,19 @@ export class HeroService {
         create: [
           {
             attributeId:
-              attributes[Math.floor(Math.random() * attributes.length)].id
-          }
-        ]
+              attributes[Math.floor(Math.random() * attributes.length)].id,
+          },
+        ],
       },
       user: {
         connect: {
-          id: userId
-        }
-      }
-    }
+          id: userId,
+        },
+      },
+    };
 
     return await this.prisma.hero.create({
-      data: newHero
-    })
+      data: newHero,
+    });
   };
 }
