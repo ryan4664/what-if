@@ -1,16 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import { v1 as uuidv1 } from 'uuid'
 import bcrypt from 'bcryptjs'
+import { Random } from 'random-js'
 
 const prisma = new PrismaClient()
 
 interface IHeroSeed {
-  name: string;
-  ability: string;
-  moveNames: string[];
+  name: string
+  ability: string
+  moveNames: string[]
 }
 
-async function main () {
+async function main() {
   const seedData: IHeroSeed[] = [
     {
       name: 'Spiderman',
@@ -36,6 +37,8 @@ async function main () {
     { name: 'Deadpool', ability: 'Cannot die', moveNames: ['Invincible'] }
   ]
 
+  const random = new Random()
+
   const inserts = seedData.map(async (x, index) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash('123', salt)
@@ -52,13 +55,17 @@ async function main () {
       data: {
         multiverse: uuidv1(),
         name: x.name,
-        userId: user.id
+        totalHealth: 100,
+        currentHealth: 100,
+        userId: user.id,
+        speed: random.integer(1, 100)
       }
     })
 
     await prisma.attribute.create({
       data: {
-        name: x.ability
+        name: x.ability,
+        baseDamage: random.integer(1, 100)
       }
     })
 

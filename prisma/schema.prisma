@@ -17,14 +17,19 @@ model User {
 }
 
 model Hero {
-  id                String          @id @default(uuid()) @db.Uuid
-  multiverse        String          @unique @db.Uuid
-  name              String          @db.VarChar(250)
-  userId            String          @db.Uuid
-  currentLevel      Int             @default(1) @db.Integer
-  currentExperience Int             @default(1) @db.Integer
-  user              User            @relation(fields: [userId], references: [id])
-  heroAttributes    HeroAttribute[]
+  id                  String                       @id @default(uuid()) @db.Uuid
+  multiverse          String                       @unique @db.Uuid
+  name                String                       @db.VarChar(250)
+  userId              String                       @db.Uuid
+  currentLevel        Int                          @default(1) @db.Integer
+  currentExperience   Int                          @default(1) @db.Integer
+  totalHealth         Int                          @default(1) @db.Integer
+  currentHealth       Int                          @default(1) @db.Integer
+  speed               Int                          @default(1) @db.Integer
+  user                User                         @relation(fields: [userId], references: [id])
+  heroAttributes      HeroAttribute[]
+  HeroOneCombatResult PlayerVsPlayerCombatResult[] @relation("HeroOneRelation")
+  HeroTwoCombatResult PlayerVsPlayerCombatResult[] @relation("HeroTwoRelation")
 }
 
 model HeroAttribute {
@@ -38,6 +43,7 @@ model HeroAttribute {
 model Attribute {
   id             String          @id @default(uuid()) @db.Uuid
   name           String          @db.VarChar(100)
+  baseDamage     Int             @default(1) @db.Integer
   heroAttributes HeroAttribute[]
   moves          AttributeMove[]
 }
@@ -55,4 +61,15 @@ model LevelTiers {
   id            String @id @default(uuid())
   level         Int    @db.Integer
   minExperience Int    @db.Integer
+}
+
+model PlayerVsPlayerCombatResult {
+  id            String   @id @default(uuid())
+  heroOneId     String   @db.Uuid
+  heroTwoId     String   @db.Uuid
+  combatDate    DateTime @default(now()) @db.Date
+  winningHeroId String?  @db.Uuid
+  log           Json?    @db.Json
+  heroOne       Hero     @relation(fields: [heroOneId], references: [id], name: "HeroOneRelation")
+  heroTwo       Hero     @relation(fields: [heroTwoId], references: [id], name: "HeroTwoRelation")
 }
