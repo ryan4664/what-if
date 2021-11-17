@@ -45,6 +45,7 @@ const typeDefs = gql`
 
   type Mutation {
     login(emailAddress: String!, password: String!): String!
+    register(emailAddress: String!, password: String!): String!
     createHero(name: String!): Hero!
     purchaseHero(userId: ID!, heroName: String): ID
   }
@@ -78,6 +79,15 @@ const resolvers = {
     ) => {
       const service = new AuthService(context.dataSources.store.prisma)
       return await service.login({ emailAddress, password })
+    },
+    register: async (
+      _,
+      { emailAddress, password },
+      context: IApolloContext,
+      __
+    ) => {
+      const service = new AuthService(context.dataSources.store.prisma)
+      return await service.register({ emailAddress, password })
     },
     createHero: async (_, { userId }, context: IApolloContext, __) => {
       const service = new HeroService(context.dataSources.store.prisma)

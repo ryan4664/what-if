@@ -25,4 +25,33 @@ export class AuthService {
 
     return jwt.sign({ userId: user.id }, 'someKey')
   }
+
+  public register = async ({
+    emailAddress,
+    password
+  }: {
+    emailAddress: string
+    password: string
+  }): Promise<string> => {
+    const user = await new UserService(this.prisma).findUser({ emailAddress })
+
+    if (user !== null) {
+      throw new Error('Email already in use.')
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    const userService = new UserService(this.prisma)
+
+    const newUser = {
+      emailAddress,
+      password: hashedPassword,
+      timeShards: 100
+    }
+
+    const result = await userService.create(newUser)
+
+    return jwt.sign({ userId: result.id }, 'someKey')
+  }
 }

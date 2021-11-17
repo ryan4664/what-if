@@ -26,16 +26,13 @@ export class UserService {
     return user
   }
 
-  public findUser = async ({ emailAddress }): Promise<User> => {
+  public findUser = async ({ emailAddress }): Promise<User | null> => {
     const user = await this.prisma.user.findUnique({
       where: {
         emailAddress: emailAddress
       }
     })
 
-    if (user == null) {
-      throw new Error('User not found')
-    }
     return user
   }
 
@@ -47,9 +44,13 @@ export class UserService {
     })
   }
 
-  public create = async (args): Promise<User> => {
-    const { emailAddress, password } = args
-
+  public create = async ({
+    emailAddress,
+    password
+  }: {
+    emailAddress: string
+    password: string
+  }): Promise<User> => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
@@ -62,7 +63,7 @@ export class UserService {
     })
   }
 
-  public purchaseHero = async (args) => {
+  public purchaseHero = async (args: { userId; heroName }) => {
     const { userId, heroName } = args
 
     const heroService = new HeroService(this.prisma)
