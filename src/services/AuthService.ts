@@ -10,7 +10,17 @@ export class AuthService {
     this.prisma = prisma
   }
 
-  public login = async ({ emailAddress, password }): Promise<string> => {
+  public login = async ({
+    emailAddress,
+    password
+  }: {
+    emailAddress: string
+    password: string
+  }): Promise<string> => {
+    if (!emailAddress || !password) {
+      throw new Error('A username and password is required')
+    }
+
     const user = await new UserService(this.prisma).findUser({ emailAddress })
 
     if (user == null) {
@@ -33,6 +43,10 @@ export class AuthService {
     emailAddress: string
     password: string
   }): Promise<string> => {
+    if (!emailAddress || !password) {
+      throw new Error('A username and password is required')
+    }
+
     const user = await new UserService(this.prisma).findUser({ emailAddress })
 
     if (user !== null) {
@@ -52,6 +66,7 @@ export class AuthService {
 
     const result = await userService.create(newUser)
 
+    // TODO: replace with env var
     return jwt.sign({ userId: result.id }, 'someKey')
   }
 }
