@@ -47,7 +47,7 @@ const typeDefs = gql`
     login(emailAddress: String!, password: String!): String!
     register(emailAddress: String!, password: String!): String!
     createHero(name: String!): Hero!
-    purchaseHero(userId: ID!, heroName: String): ID
+    purchaseHero(heroName: String): ID
   }
 `
 
@@ -93,14 +93,17 @@ const resolvers = {
       const service = new HeroService(context.dataSources.store.prisma)
       return await service.create({ userId })
     },
-    purchaseHero: async (
-      _,
-      { userId, heroName },
-      context: IApolloContext,
-      __
-    ) => {
-      const service = new UserService(context.dataSources.store.prisma)
-      return await service.purchaseHero({ userId, heroName })
+    purchaseHero: async (_, { heroName }, context: IApolloContext, __) => {
+      const service = new HeroService(context.dataSources.store.prisma)
+      // TODO: make this cleaner
+      if (!context.user) {
+        throw new Error('Unauthenticted')
+      }
+
+      return await service.purchaseHero({
+        userId: context.user.userId,
+        heroName
+      })
     }
   }
 }

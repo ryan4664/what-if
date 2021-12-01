@@ -1,5 +1,8 @@
 import { Hero, Prisma, PrismaClient } from '@prisma/client'
 import { v1 as uuidv1 } from 'uuid'
+
+// Store somewhere?
+export const HERO_PRICE_IN_TIME_SHARDS = 100
 export class HeroService {
   prisma: PrismaClient
 
@@ -78,6 +81,39 @@ export class HeroService {
 
     return await this.prisma.hero.create({
       data: newHero
+    })
+  }
+
+  public purchaseHero = async ({
+    userId,
+    heroName
+  }: {
+    userId?: string
+    heroName: string
+  }) => {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    if (user == null) {
+      throw new Error('User not found')
+    }
+
+    if (user.timeShards < HERO_PRICE_IN_TIME_SHARDS) {
+      throw new Error('User does not have enough timeshards')
+    }
+
+    await this.create({ userId: user.id, name: heroName })
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        timeShards: user.timeShards - HERO_PRICE_IN_TIME_SHARDS
+      }
     })
   }
 }

@@ -1,6 +1,4 @@
 import { PrismaClient, User } from '@prisma/client'
-import { HeroService } from './HeroService'
-import bcrypt from 'bcryptjs'
 
 export class UserService {
   prisma: PrismaClient
@@ -51,45 +49,11 @@ export class UserService {
     emailAddress: string
     password: string
   }): Promise<User> => {
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-
     return await this.prisma.user.create({
       data: {
         emailAddress,
-        password: hashedPassword,
+        password,
         timeShards: 100
-      }
-    })
-  }
-
-  public purchaseHero = async (args: { userId; heroName }) => {
-    const { userId, heroName } = args
-
-    const heroService = new HeroService(this.prisma)
-
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: userId
-      }
-    })
-
-    if (user == null) {
-      throw new Error('User not found')
-    }
-
-    if (user.timeShards < 100) {
-      throw new Error('User does not have enough timeshards')
-    }
-
-    await heroService.create({ userId: user.id, name: heroName })
-
-    await this.prisma.user.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        timeShards: user.timeShards - 100
       }
     })
   }
