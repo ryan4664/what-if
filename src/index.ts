@@ -47,7 +47,7 @@ const typeDefs = gql`
     login(emailAddress: String!, password: String!): String!
     register(emailAddress: String!, password: String!): String!
     createHero(name: String!): Hero!
-    purchaseHero(heroName: String): ID
+    purchaseHero(heroName: String): Int!
   }
 `
 

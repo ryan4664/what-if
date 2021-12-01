@@ -88,7 +88,7 @@ export class HeroService {
     userId,
     heroName
   }: {
-    userId?: string
+    userId: string
     heroName: string
   }) => {
     const user = await this.prisma.user.findUnique({
@@ -107,7 +107,7 @@ export class HeroService {
 
     await this.create({ userId: user.id, name: heroName })
 
-    await this.prisma.user.update({
+    const result = await this.prisma.user.update({
       where: {
         id: user.id
       },
@@ -115,5 +115,7 @@ export class HeroService {
         timeShards: user.timeShards - HERO_PRICE_IN_TIME_SHARDS
       }
     })
+
+    return result.timeShards
   }
 }
