@@ -1,5 +1,7 @@
 import { Hero, Prisma, PrismaClient } from '@prisma/client'
 import { v1 as uuidv1 } from 'uuid'
+import { TimeShardService, TransactionTypeEnum } from './TimeShardService'
+import { UserService } from './UserService'
 
 // Store somewhere?
 export const HERO_PRICE_IN_TIME_SHARDS = 100
@@ -90,12 +92,10 @@ export class HeroService {
   }: {
     userId: string
     heroName: string
-  }) => {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: userId
-      }
-    })
+  }): Promise<Hero> => {
+    const timeShardService = new TimeShardService(this.prisma)
+    const userService = new UserService(this.prisma)
+    const user = await userService.findUserById(userId)
 
     if (user == null) {
       throw new Error('User not found')
@@ -105,17 +105,14 @@ export class HeroService {
       throw new Error('User does not have enough timeshards')
     }
 
-    await this.create({ userId: user.id, name: heroName })
+    const newHero = await this.create({ userId: user.id, name: heroName })
 
-    const result = await this.prisma.user.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        timeShards: user.timeShards - HERO_PRICE_IN_TIME_SHARDS
-      }
+    await timeShardService.debitAccount({
+      userId,
+      amount: HERO_PRICE_IN_TIME_SHARDS,
+      transactionType: TransactionTypeEnum.heroPurchaseDebit
     })
 
-    return result.timeShards
+    return newHero
   }
 }

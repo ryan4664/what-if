@@ -24,7 +24,9 @@ export class AuthService {
       throw new Error('A username and password is required')
     }
 
-    const user = await new UserService(this.prisma).findUser({ emailAddress })
+    const user = await new UserService(this.prisma).findUserByEmailAddress({
+      emailAddress
+    })
 
     if (user == null) {
       throw new Error('User not found')
@@ -50,7 +52,9 @@ export class AuthService {
       throw new Error('A username and password is required')
     }
 
-    const user = await new UserService(this.prisma).findUser({ emailAddress })
+    const user = await new UserService(this.prisma).findUserByEmailAddress({
+      emailAddress
+    })
 
     if (user !== null) {
       throw new Error('Email already in use.')

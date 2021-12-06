@@ -24,10 +24,22 @@ export class UserService {
     return user
   }
 
-  public findUser = async ({ emailAddress }): Promise<User | null> => {
+  public findUserByEmailAddress = async ({
+    emailAddress
+  }): Promise<User | null> => {
     const user = await this.prisma.user.findUnique({
       where: {
         emailAddress: emailAddress
+      }
+    })
+
+    return user
+  }
+
+  public findUserById = async (userId: string): Promise<User | null> => {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId
       }
     })
 
