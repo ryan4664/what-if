@@ -6,6 +6,7 @@ import { AttributeService } from './services/AttributeService'
 import { UserService } from './services/UserService'
 import { AuthService } from './services/AuthService'
 import { validateToken } from './util'
+import { TimeShardService } from './services/TimeShardService'
 
 const typeDefs = gql`
   type Hero {
@@ -36,11 +37,21 @@ const typeDefs = gql`
     heros: [Hero!]!
   }
 
+  type WalletTransaction {
+    id: ID!
+    userId: String!
+    previousTimeShards: Int!
+    timeShardsDelta: Int!
+    updatedTimeShards: Int!
+    transactionType: Int!
+  }
+
   type Query {
     heros: [Hero!]!
     attributes: [Attribute!]!
     user(userId: ID!): User
     users: [User!]!
+    userWalletTransactions: [WalletTransaction!]!
   }
 
   type Mutation {
@@ -68,6 +79,17 @@ const resolvers = {
     users: async (_, ___, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma)
       return await service.getUsers()
+    },
+    userWalletTransactions: async (_, ___, context: IApolloContext, __) => {
+      const service = new TimeShardService(context.dataSources.store.prisma)
+      // TODO: make this cleaner
+      if (!context.user) {
+        throw new Error('Unauthenticted')
+      }
+
+      return await service.getTransactionHistoryItemsByUserId({
+        userId: context.user.userId
+      })
     }
   },
   Mutation: {

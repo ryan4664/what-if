@@ -2,7 +2,9 @@ import { PrismaClient } from '@prisma/client'
 import { UserService } from './UserService'
 
 export enum TransactionTypeEnum {
-  heroPurchaseDebit = 0
+  testDebit = -2,
+  testCredit = -1,
+  heroPurchaseDebit = 1
 }
 
 export class TimeShardService {
@@ -10,6 +12,26 @@ export class TimeShardService {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma
+  }
+
+  public getTransactionHistoryItemsByUserId = async ({
+    userId
+  }: {
+    userId: string
+  }) => {
+    const userService = new UserService(this.prisma)
+
+    const user = await userService.findUserById(userId)
+
+    if (user == null) {
+      throw new Error('User not found')
+    }
+
+    return await this.prisma.transactionHistory.findMany({
+      where: {
+        userId
+      }
+    })
   }
 
   public debitAccount = async ({
@@ -36,6 +58,44 @@ export class TimeShardService {
       userId,
       previousTimeShards: previousAmount,
       timeShardsDelta: amountToDebit,
+      updatedTimeShards: updatedAmount,
+      transactionType
+    })
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        timeShards: updatedAmount
+      }
+    })
+  }
+
+  public creditAccount = async ({
+    userId,
+    amount: amountToCredit,
+    transactionType
+  }: {
+    userId: string
+    amount: number
+    transactionType: TransactionTypeEnum
+  }) => {
+    const userService = new UserService(this.prisma)
+
+    const user = await userService.findUserById(userId)
+
+    if (user == null) {
+      throw new Error('User not found')
+    }
+
+    const previousAmount = user.timeShards
+    const updatedAmount = previousAmount + amountToCredit
+
+    await this.createTransactionHistoryItem({
+      userId,
+      previousTimeShards: previousAmount,
+      timeShardsDelta: amountToCredit,
       updatedTimeShards: updatedAmount,
       transactionType
     })

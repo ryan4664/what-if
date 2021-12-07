@@ -3,6 +3,11 @@ import { v1 as uuidv1 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import { Random } from 'random-js'
 
+import {
+  TimeShardService,
+  TransactionTypeEnum
+} from '../src/services/TimeShardService'
+
 const prisma = new PrismaClient()
 
 interface IHeroSeed {
@@ -12,6 +17,7 @@ interface IHeroSeed {
 }
 
 async function main() {
+  const timeShardService = new TimeShardService(prisma)
   const seedData: IHeroSeed[] = [
     {
       name: 'Spiderman',
@@ -78,6 +84,22 @@ async function main() {
           }))
         }
       }
+    })
+
+    await timeShardService.createTransactionHistoryItem({
+      userId: user.id,
+      previousTimeShards: user.timeShards,
+      timeShardsDelta: 0,
+      transactionType: TransactionTypeEnum.testCredit,
+      updatedTimeShards: user.timeShards
+    })
+
+    await timeShardService.createTransactionHistoryItem({
+      userId: user.id,
+      previousTimeShards: user.timeShards,
+      timeShardsDelta: 0,
+      transactionType: TransactionTypeEnum.testDebit,
+      updatedTimeShards: user.timeShards
     })
   })
 
