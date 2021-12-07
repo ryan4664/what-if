@@ -50,6 +50,7 @@ const typeDefs = gql`
     heros: [Hero!]!
     attributes: [Attribute!]!
     user(userId: ID!): User
+    currentUser: User
     users: [User!]!
     userWalletTransactions: [WalletTransaction!]!
   }
@@ -75,6 +76,14 @@ const resolvers = {
     user: async (_, { userId }, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma)
       return await service.getUser({ userId })
+    },
+    currentUser: async (_, __, context: IApolloContext, ___) => {
+      const service = new UserService(context.dataSources.store.prisma)
+      // TODO: make this cleaner
+      if (!context.user) {
+        throw new Error('Unauthenticted')
+      }
+      return await service.getUser({ userId: context.user.userId })
     },
     users: async (_, ___, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma)
