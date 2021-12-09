@@ -124,10 +124,14 @@ async function main() {
   const levels = [1, 2, 3, 4, 5]
 
   const levelPromises = levels.map(async (x) => {
-    await prisma.levelTiers.create({
+    const minXp = x ** 3 * 1000
+
+    console.log(minXp)
+
+    await prisma.levelTier.create({
       data: {
         level: x,
-        minExperience: x === 1 ? 0 : x ** 3 * 1000
+        minExperience: x === 1 ? 0 : minXp
       }
     })
   })

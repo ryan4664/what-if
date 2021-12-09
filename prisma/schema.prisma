@@ -54,11 +54,9 @@ model AttributeMove {
   name        String    @default("DefaultMoveName") @db.VarChar(250)
   attributeId String    @db.Uuid
   attriubute  Attribute @relation(fields: [attributeId], references: [id])
-
-
 }
 
-model LevelTiers {
+model LevelTier {
   id            String @id @default(uuid())
   level         Int    @db.Integer
   minExperience Int    @db.Integer

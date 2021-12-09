@@ -1,12 +1,13 @@
-import { ApolloServer, gql } from 'apollo-server'
 import { PrismaClient } from '@prisma/client'
-import { IApolloContext, Store } from './types'
-import { HeroService } from './services/HeroService'
+import { ApolloServer, gql } from 'apollo-server'
 import { AttributeService } from './services/AttributeService'
-import { UserService } from './services/UserService'
 import { AuthService } from './services/AuthService'
-import { validateToken } from './util'
+import { HeroService } from './services/HeroService'
+import { LevelTierService } from './services/LevelTierService'
 import { TimeShardService } from './services/TimeShardService'
+import { UserService } from './services/UserService'
+import { IApolloContext, Store } from './types'
+import { validateToken } from './util'
 
 const typeDefs = gql`
   type Hero {
@@ -37,6 +38,12 @@ const typeDefs = gql`
     heros: [Hero!]!
   }
 
+  type LevelTier {
+    id: ID!
+    level: Int!
+    minExperience: Int
+  }
+
   type WalletTransaction {
     id: ID!
     userId: String!
@@ -53,6 +60,7 @@ const typeDefs = gql`
     currentUser: User
     users: [User!]!
     userWalletTransactions: [WalletTransaction!]!
+    levelTiers: [LevelTier!]!
   }
 
   type Mutation {
@@ -99,6 +107,10 @@ const resolvers = {
       return await service.getTransactionHistoryItemsByUserId({
         userId: context.user.userId
       })
+    },
+    levelTiers: async (_, ___, context: IApolloContext, __) => {
+      const service = new LevelTierService(context.dataSources.store.prisma)
+      return await service.get()
     }
   },
   Mutation: {
