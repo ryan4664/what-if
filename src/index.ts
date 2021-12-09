@@ -3,7 +3,7 @@ import { ApolloServer, gql } from 'apollo-server'
 import { AttributeService } from './services/AttributeService'
 import { AuthService } from './services/AuthService'
 import { HeroService } from './services/HeroService'
-import { LevelTierService } from './services/LevelTierService'
+import { ExperienceService } from './services/ExperienceService'
 import { TimeShardService } from './services/TimeShardService'
 import { UserService } from './services/UserService'
 import { IApolloContext, Store } from './types'
@@ -32,9 +32,10 @@ const typeDefs = gql`
 
   type User {
     id: ID
-    emailAddress: String
-    password: String
-    timeShards: Int
+    emailAddress: String!
+    currentLevel: Int!
+    currentExperience: Int!
+    timeShards: Int!
     heros: [Hero!]!
   }
 
@@ -109,8 +110,8 @@ const resolvers = {
       })
     },
     levelTiers: async (_, ___, context: IApolloContext, __) => {
-      const service = new LevelTierService(context.dataSources.store.prisma)
-      return await service.get()
+      const service = new ExperienceService(context.dataSources.store.prisma)
+      return await service.getLevelTiers()
     }
   },
   Mutation: {

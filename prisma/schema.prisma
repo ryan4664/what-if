@@ -13,6 +13,8 @@ model User {
   emailAddress       String               @unique @db.VarChar
   password           String               @db.VarChar
   timeShards         Int                  @default(0) @db.Integer
+  currentLevel       Int                  @default(1) @db.Integer
+  currentExperience  Int                  @default(0) @db.Integer
   heros              Hero[]
   TransactionHistory TransactionHistory[]
 }
@@ -23,7 +25,7 @@ model Hero {
   name                String                       @db.VarChar(250)
   userId              String                       @db.Uuid
   currentLevel        Int                          @default(1) @db.Integer
-  currentExperience   Int                          @default(1) @db.Integer
+  currentExperience   Int                          @default(0) @db.Integer
   totalHealth         Int                          @default(1) @db.Integer
   currentHealth       Int                          @default(1) @db.Integer
   speed               Int                          @default(1) @db.Integer

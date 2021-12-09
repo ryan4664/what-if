@@ -7,6 +7,8 @@ import {
   TimeShardService,
   TransactionTypeEnum
 } from '../src/services/TimeShardService'
+import { UserService } from '../src/services/UserService'
+import { ExperienceService } from '../src/services/ExperienceService'
 
 const prisma = new PrismaClient()
 
@@ -17,7 +19,10 @@ interface IHeroSeed {
 }
 
 async function main() {
+  const userService = new UserService(prisma)
   const timeShardService = new TimeShardService(prisma)
+  const experienceService = new ExperienceService(prisma)
+
   const seedData: IHeroSeed[] = [
     {
       name: 'Spiderman',
@@ -43,18 +48,37 @@ async function main() {
     { name: 'Deadpool', ability: 'Cannot die', moveNames: ['Invincible'] }
   ]
 
+  const levels = [1, 2, 3, 4, 5]
+
+  const levelPromises = levels.map(async (x) => {
+    const minXp = x ** 3 * 1000
+
+    await prisma.levelTier.create({
+      data: {
+        level: x,
+        minExperience: x === 1 ? 0 : minXp
+      }
+    })
+  })
+
+  await Promise.all([...levelPromises])
+
   const random = new Random()
 
   const inserts = seedData.map(async (x, index) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash('123', salt)
 
-    const user = await prisma.user.create({
-      data: {
-        emailAddress: `${index}@whynotga.me`,
-        password: hashedPassword,
-        timeShards: 100
-      }
+    const user = await userService.create({
+      emailAddress: `${index}@whynotga.me`,
+      password: hashedPassword
+    })
+
+    // Credit random experience to test crediting and
+    // leveling up
+    await experienceService.creditUserExperience({
+      userId: user.id,
+      amountToCredit: random.integer(50, 15000)
     })
 
     await prisma.hero.create({
@@ -121,22 +145,7 @@ async function main() {
     attributes.splice(attributeIndex, 1)
   })
 
-  const levels = [1, 2, 3, 4, 5]
-
-  const levelPromises = levels.map(async (x) => {
-    const minXp = x ** 3 * 1000
-
-    console.log(minXp)
-
-    await prisma.levelTier.create({
-      data: {
-        level: x,
-        minExperience: x === 1 ? 0 : minXp
-      }
-    })
-  })
-
-  await Promise.all([...updates, ...levelPromises])
+  await Promise.all([...updates])
 }
 
 main()

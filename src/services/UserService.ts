@@ -1,4 +1,5 @@
 import { PrismaClient, User } from '@prisma/client'
+import { HERO_PRICE_IN_TIME_SHARDS } from './HeroService'
 
 export class UserService {
   prisma: PrismaClient
@@ -65,7 +66,7 @@ export class UserService {
       data: {
         emailAddress,
         password,
-        timeShards: 100
+        timeShards: HERO_PRICE_IN_TIME_SHARDS
       }
     })
   }
