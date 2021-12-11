@@ -6,7 +6,7 @@ import { HeroService } from './services/HeroService'
 import { ExperienceService } from './services/ExperienceService'
 import { TimeShardService } from './services/TimeShardService'
 import { UserService } from './services/UserService'
-import { IApolloContext, Store } from './types'
+import { IApolloContext, IContextUser, Store } from './types'
 import { validateToken } from './util'
 
 const typeDefs = gql`
@@ -90,29 +90,22 @@ const resolvers = {
       const service = new UserService(context.dataSources.store.prisma)
       return await service.getUser({ userId })
     },
-    currentUser: async (_, __, context: IApolloContext, ___) => {
-      const service = new UserService(context.dataSources.store.prisma)
-      // TODO: make this cleaner
-      if (!context.user) {
-        throw new Error('Unauthenticted')
-      }
-      return await service.getUser({ userId: context.user.userId })
-    },
+    currentUser: async (_, __, context: IApolloContext, ___) =>
+      authenticatedCall(context, async () => {
+        const service = new UserService(context.dataSources.store.prisma)
+        return await service.getUser({ userId: context.user!.userId })
+      }),
     users: async (_, ___, context: IApolloContext, __) => {
       const service = new UserService(context.dataSources.store.prisma)
       return await service.getUsers()
     },
-    userWalletTransactions: async (_, ___, context: IApolloContext, __) => {
-      const service = new TimeShardService(context.dataSources.store.prisma)
-      // TODO: make this cleaner
-      if (!context.user) {
-        throw new Error('Unauthenticted')
-      }
-
-      return await service.getTransactionHistoryItemsByUserId({
-        userId: context.user.userId
-      })
-    },
+    userWalletTransactions: async (_, ___, context: IApolloContext, __) =>
+      authenticatedCall(context, async () => {
+        const service = new TimeShardService(context.dataSources.store.prisma)
+        return await service.getTransactionHistoryItemsByUserId({
+          userId: context.user!.userId
+        })
+      }),
     levelTiers: async (_, ___, context: IApolloContext, __) => {
       const service = new ExperienceService(context.dataSources.store.prisma)
       return await service.getLevelTiers()
@@ -137,26 +130,19 @@ const resolvers = {
       const service = new AuthService(context.dataSources.store.prisma)
       return await service.register({ emailAddress, password })
     },
-    createHero: async (_, { name }, context: IApolloContext, __) => {
-      if (!context.user) {
-        throw new Error('Unauthenticted')
-      }
-
-      const service = new HeroService(context.dataSources.store.prisma)
-      return await service.create({ userId: context.user.userId, name })
-    },
-    purchaseHero: async (_, { heroName }, context: IApolloContext, __) => {
-      const service = new HeroService(context.dataSources.store.prisma)
-      // TODO: make this cleaner
-      if (!context.user) {
-        throw new Error('Unauthenticted')
-      }
-
-      return await service.purchaseHero({
-        userId: context.user.userId,
-        heroName
-      })
-    },
+    createHero: async (_, { name }, context: IApolloContext, __) =>
+      authenticatedCall(context, async () => {
+        const service = new HeroService(context.dataSources.store.prisma)
+        return await service.create({ userId: context.user!.userId, name })
+      }),
+    purchaseHero: async (_, { heroName }, context: IApolloContext, __) =>
+      authenticatedCall(context, async () => {
+        const service = new HeroService(context.dataSources.store.prisma)
+        return await service.purchaseHero({
+          userId: context.user!.userId,
+          heroName
+        })
+      }),
     creditUserExperience: async (
       _,
       { userId, amountToCredit },
@@ -167,6 +153,13 @@ const resolvers = {
       return await service.creditUserExperience({ userId, amountToCredit })
     }
   }
+}
+
+const authenticatedCall = (context: IApolloContext, func) => {
+  if (!context.user) {
+    throw new Error('Unauthenticted')
+  }
+  return func()
 }
 
 const createStore = async function () {
@@ -191,9 +184,13 @@ const main = async () => {
     }),
     context: ({ req }) => {
       const token = req.headers.authorization || ''
-      let user = {}
+      let user: IContextUser | null = null
       if (token) {
-        user = validateToken(token)
+        try {
+          user = validateToken(token)
+        } catch (error) {
+          throw new Error('Invalid token')
+        }
       }
 
       return {
