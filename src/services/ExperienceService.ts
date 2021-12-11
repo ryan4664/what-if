@@ -31,6 +31,7 @@ export class ExperienceService {
       }
     })
   }
+
   public creditUserExperience = async ({
     userId,
     amountToCredit
@@ -40,18 +41,18 @@ export class ExperienceService {
   }): Promise<User | null> => {
     const userService = new UserService(this.prisma)
 
-    var user = await userService.findUserById(userId)
+    const user = await userService.findUserById(userId)
 
     if (user == null) {
       throw new Error('User not found')
     }
-    var previousExperience = user.currentExperience
-    var updatedExperience = previousExperience + amountToCredit
+    const previousExperience = user.currentExperience
+    const updatedExperience = previousExperience + amountToCredit
 
     const levelTiers = await this.getLevelTiers()
-    var levelsToCredit = 0
+    let levelsToCredit = 0
 
-    var nextLevelTier = levelTiers.find(
+    let nextLevelTier = levelTiers.find(
       (x) => x.level === user!.currentLevel + 1
     )
 

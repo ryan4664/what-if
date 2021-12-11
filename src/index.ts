@@ -137,9 +137,13 @@ const resolvers = {
       const service = new AuthService(context.dataSources.store.prisma)
       return await service.register({ emailAddress, password })
     },
-    createHero: async (_, { userId }, context: IApolloContext, __) => {
+    createHero: async (_, { name }, context: IApolloContext, __) => {
+      if (!context.user) {
+        throw new Error('Unauthenticted')
+      }
+
       const service = new HeroService(context.dataSources.store.prisma)
-      return await service.create({ userId })
+      return await service.create({ userId: context.user.userId, name })
     },
     purchaseHero: async (_, { heroName }, context: IApolloContext, __) => {
       const service = new HeroService(context.dataSources.store.prisma)

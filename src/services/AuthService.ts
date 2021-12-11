@@ -65,7 +65,7 @@ export class AuthService {
 
     const userService = new UserService(this.prisma)
 
-    let emailIsValid = String(emailAddress).toLowerCase().match(EMAIL_REGEX)
+    const emailIsValid = String(emailAddress).toLowerCase().match(EMAIL_REGEX)
 
     if (!emailIsValid) {
       throw new Error('Invalid email address')

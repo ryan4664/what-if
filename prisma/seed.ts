@@ -9,6 +9,8 @@ import {
 } from '../src/services/TimeShardService'
 import { UserService } from '../src/services/UserService'
 import { ExperienceService } from '../src/services/ExperienceService'
+import { HeroService } from '../src/services/HeroService'
+import { AttributeService } from '../src/services/AttributeService'
 
 const prisma = new PrismaClient()
 
@@ -22,6 +24,8 @@ async function main() {
   const userService = new UserService(prisma)
   const timeShardService = new TimeShardService(prisma)
   const experienceService = new ExperienceService(prisma)
+  const heroService = new HeroService(prisma)
+  const attributeService = new AttributeService(prisma)
 
   const seedData: IHeroSeed[] = [
     {
@@ -81,17 +85,7 @@ async function main() {
       amountToCredit: random.integer(50, 15000)
     })
 
-    await prisma.hero.create({
-      data: {
-        multiverse: uuidv1(),
-        name: x.name,
-        totalHealth: 100,
-        currentHealth: 100,
-        userId: user.id,
-        speed: random.integer(1, 100),
-        speach: random.integer(1, 100),
-      }
-    })
+    await heroService.create({ name: x.name, userId: user.id })
 
     await prisma.attribute.create({
       data: {
@@ -131,8 +125,8 @@ async function main() {
   await Promise.all(inserts)
 
   const [heros, attributes] = await Promise.all([
-    await prisma.hero.findMany(),
-    await prisma.attribute.findMany()
+    await heroService.getHeros(),
+    await attributeService.getAttributes()
   ])
 
   const updates = heros.map(async (x) => {

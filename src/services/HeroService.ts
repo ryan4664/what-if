@@ -58,9 +58,13 @@ export class HeroService {
     })
   }
 
-  public create = async (args): Promise<Hero> => {
-    const { name, userId } = args
-
+  public create = async ({
+    userId,
+    name
+  }: {
+    userId: string
+    name: string
+  }): Promise<Hero> => {
     const attributes = await this.prisma.attribute.findMany()
 
     const newHero: Prisma.HeroCreateInput = {
