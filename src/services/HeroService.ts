@@ -12,7 +12,7 @@ export class HeroService {
     this.prisma = prisma
   }
 
-  public getHeros = async (heroIds?: string[]): Promise<any> => {
+  public getHeros = async (heroIds?: string[]): Promise<Hero[]> => {
     let arg = {
       include: {
         heroAttributes: {
@@ -38,8 +38,7 @@ export class HeroService {
     const results = await this.prisma.hero.findMany(arg)
 
     return results.map((x) => ({
-      ...x,
-      attributeName: x.heroAttributes[0].attriubute.name
+      ...x
     }))
   }
 

@@ -10,7 +10,6 @@ export const validateToken = (token: string): IContextUser => {
       userId: result.userId
     }
   } catch (error) {
-    console.log(error)
     throw new Error('Invalid token')
   }
 }
