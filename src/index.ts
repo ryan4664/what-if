@@ -72,6 +72,7 @@ const typeDefs = gql`
     register(emailAddress: String!, password: String!): String!
     createHero(name: String!): Hero!
     purchaseHero(heroName: String): Int!
+    creditUserExperience(userId: String!, amountToCredit: Int!): User
   }
 `
 
@@ -151,6 +152,15 @@ const resolvers = {
         userId: context.user.userId,
         heroName
       })
+    },
+    creditUserExperience: async (
+      _,
+      { userId, amountToCredit },
+      context: IApolloContext,
+      __
+    ) => {
+      const service = new ExperienceService(context.dataSources.store.prisma)
+      return await service.creditUserExperience({ userId, amountToCredit })
     }
   }
 }

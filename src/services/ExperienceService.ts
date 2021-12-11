@@ -18,10 +18,13 @@ export class ExperienceService {
     })
   }
 
-  private creditUserLevel = async (user: User): Promise<User> => {
+  private creditUserLevel = async (
+    user: User,
+    amountToCredit: number
+  ): Promise<User> => {
     return await this.prisma.user.update({
       data: {
-        currentLevel: user.currentLevel + 1
+        currentLevel: user.currentLevel + amountToCredit
       },
       where: {
         id: user.id
@@ -34,7 +37,7 @@ export class ExperienceService {
   }: {
     userId: string
     amountToCredit: number
-  }): Promise<void> => {
+  }): Promise<User | null> => {
     const userService = new UserService(this.prisma)
 
     var user = await userService.findUserById(userId)
@@ -42,29 +45,40 @@ export class ExperienceService {
     if (user == null) {
       throw new Error('User not found')
     }
-
-    const previousExperience = user.currentExperience
-    const updatedExperience = previousExperience + amountToCredit
+    var previousExperience = user.currentExperience
+    var updatedExperience = previousExperience + amountToCredit
 
     const levelTiers = await this.getLevelTiers()
+    var levelsToCredit = 0
 
-    const nextLevelTier = levelTiers.find(
+    var nextLevelTier = levelTiers.find(
       (x) => x.level === user!.currentLevel + 1
     )
 
     if (!nextLevelTier) {
-      throw new Error('Error checking level requirements')
+      // max level, nothing to do
+      return null
     }
 
-    if (updatedExperience >= nextLevelTier.minExperience) {
-      console.log(`User: ${user.id} is leveling up! ${user.currentLevel}`)
-      user = await this.creditUserLevel(user)
-      console.log(`User: ${user.id} has leveled up! ${user.currentLevel}`)
-      // TODO: This will only handle leveling up once, loop here
-      user.currentExperience = updatedExperience - nextLevelTier.minExperience
+    do {
+      if (updatedExperience >= nextLevelTier.minExperience) {
+        levelsToCredit += 1
+        nextLevelTier = levelTiers.find((x) => x.level === levelsToCredit + 1)
+
+        if (!nextLevelTier) {
+          // max level, nothing to do
+          break
+        }
+
+        user.currentExperience = updatedExperience - nextLevelTier.minExperience
+      }
+    } while (updatedExperience > nextLevelTier.minExperience)
+
+    if (levelsToCredit > 0) {
+      await this.creditUserLevel(user, levelsToCredit)
     }
 
-    await this.prisma.user.update({
+    return await this.prisma.user.update({
       data: {
         currentExperience: updatedExperience
       },
