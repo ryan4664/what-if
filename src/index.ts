@@ -16,6 +16,9 @@ const typeDefs = gql`
     name: String
     attributes: [HeroAttribute]!
     attributeName: String
+    totalHealth: Int!
+    currentHealth: Int!
+    speach: Int!
   }
 
   type Attribute {

@@ -88,7 +88,8 @@ async function main() {
         totalHealth: 100,
         currentHealth: 100,
         userId: user.id,
-        speed: random.integer(1, 100)
+        speed: random.integer(1, 100),
+        speach: random.integer(1, 100),
       }
     })
 

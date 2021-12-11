@@ -29,6 +29,7 @@ model Hero {
   totalHealth         Int                          @default(1) @db.Integer
   currentHealth       Int                          @default(1) @db.Integer
   speed               Int                          @default(1) @db.Integer
+  speach              Int                          @default(1) @db.Integer
   user                User                         @relation(fields: [userId], references: [id])
   heroAttributes      HeroAttribute[]
   HeroOneCombatResult PlayerVsPlayerCombatResult[] @relation("HeroOneRelation")
