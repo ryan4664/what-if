@@ -11,5 +11,5 @@ export default Factory.define<User>(() => ({
   password: random.string(10),
   timeShards: random.integer(0, 100),
   currentLevel: 1,
-  currentExperience: 1
+  currentExperience: 0
 }))

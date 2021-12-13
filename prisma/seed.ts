@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { v1 as uuidv1 } from 'uuid'
 import bcrypt from 'bcryptjs'
 import { Random } from 'random-js'
 
@@ -85,8 +84,6 @@ async function main() {
       amountToCredit: random.integer(50, 15000)
     })
 
-    await heroService.create({ name: x.name, userId: user.id })
-
     await prisma.attribute.create({
       data: {
         name: x.ability,
@@ -104,6 +101,8 @@ async function main() {
         }
       }
     })
+
+    await heroService.create({ name: x.name, userId: user.id })
 
     await timeShardService.createTransactionHistoryItem({
       userId: user.id,
