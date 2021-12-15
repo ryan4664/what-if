@@ -73,7 +73,7 @@ export class ExperienceService {
 
         user.currentExperience = updatedExperience - nextLevelTier.minExperience
       }
-    } while (updatedExperience > nextLevelTier.minExperience)
+    } while (user.currentExperience > nextLevelTier.minExperience)
 
     if (levelsToCredit > 0) {
       await this.creditUserLevel(user, levelsToCredit)

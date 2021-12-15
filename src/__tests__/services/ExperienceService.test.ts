@@ -33,6 +33,17 @@ test('should gain experince but not level up ', async () => {
     amountToCredit: 500
   })
 
+  expect(mockCtx.prisma.user.update).toBeCalledWith(
+    expect.objectContaining({
+      data: {
+        currentExperience: 500
+      },
+      where: {
+        id: user.id
+      }
+    })
+  )
+
   expect(updatedUser?.currentExperience).toEqual(user.currentExperience + 500)
   expect(updatedUser?.currentLevel).toEqual(user.currentLevel)
 })
@@ -58,6 +69,28 @@ test('should gain experince and level up once ', async () => {
     userId: user.id,
     amountToCredit: 1500
   })
+
+  expect(mockCtx.prisma.user.update).toBeCalledWith(
+    expect.objectContaining({
+      data: {
+        currentLevel: 2
+      },
+      where: {
+        id: user.id
+      }
+    })
+  )
+
+  expect(mockCtx.prisma.user.update).toBeCalledWith(
+    expect.objectContaining({
+      data: {
+        currentExperience: 1500
+      },
+      where: {
+        id: user.id
+      }
+    })
+  )
 
   expect(updatedUser?.currentExperience).toEqual(1500)
   expect(updatedUser?.currentLevel).toEqual(2)
@@ -85,11 +118,30 @@ test('should gain experince and level up twice ', async () => {
     currentLevel: user.currentLevel + 2
   })
 
-  const updatedUser = await experienceService.creditUserExperience({
+  await experienceService.creditUserExperience({
     userId: user.id,
-    amountToCredit: 1500
+    amountToCredit: 2500
   })
 
-  expect(updatedUser?.currentExperience).toEqual(2500)
-  expect(updatedUser?.currentLevel).toEqual(3)
+  expect(mockCtx.prisma.user.update).toBeCalledWith(
+    expect.objectContaining({
+      data: {
+        currentLevel: 3
+      },
+      where: {
+        id: user.id
+      }
+    })
+  )
+
+  expect(mockCtx.prisma.user.update).toBeCalledWith(
+    expect.objectContaining({
+      data: {
+        currentExperience: 2500
+      },
+      where: {
+        id: user.id
+      }
+    })
+  )
 })
