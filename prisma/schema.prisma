@@ -63,6 +63,7 @@ model LevelTier {
   id            String @id @default(uuid())
   level         Int    @db.Integer
   minExperience Int    @db.Integer
+  type          Int    @db.Integer
 }
 
 model PlayerVsPlayerCombatResult {

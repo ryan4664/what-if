@@ -42,7 +42,7 @@ export class HeroService {
     }))
   }
 
-  public getHero = async ({ heroId }): Promise<Hero | null> => {
+  public findById = async (heroId: string): Promise<Hero | null> => {
     return await this.prisma.hero.findUnique({
       where: {
         id: heroId

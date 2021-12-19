@@ -12,8 +12,8 @@ export class CombatService {
   public oneOnOnePVP = async ({ heroOneId, heroTwoId }): Promise<any> => {
     const heroService = new HeroService(this.prisma)
 
-    const heroOne = await heroService.getHero(heroOneId)
-    const heroTwo = await heroService.getHero(heroTwoId)
+    const heroOne = await heroService.findById(heroOneId)
+    const heroTwo = await heroService.findById(heroTwoId)
 
     if (!heroOne || !heroTwo) {
       throw new Error('Unable to find both heros, exiting combat')

@@ -6,7 +6,7 @@ import { HeroService } from './services/HeroService'
 import { ExperienceService } from './services/ExperienceService'
 import { TimeShardService } from './services/TimeShardService'
 import { UserService } from './services/UserService'
-import { IApolloContext, IContextUser, Store } from './types'
+import { IApolloContext, IContextUser, LevelType, Store } from './types'
 import { validateToken } from './util'
 
 const typeDefs = gql`
@@ -19,6 +19,8 @@ const typeDefs = gql`
     totalHealth: Int!
     currentHealth: Int!
     speach: Int!
+    currentExperience: Int!
+    currentLevel: Int!
   }
 
   type Attribute {
@@ -45,7 +47,8 @@ const typeDefs = gql`
   type LevelTier {
     id: ID!
     level: Int!
-    minExperience: Int
+    minExperience: Int!
+    type: Int!
   }
 
   type WalletTransaction {
@@ -73,6 +76,7 @@ const typeDefs = gql`
     createHero(name: String!): Hero!
     purchaseHero(heroName: String): Int!
     creditUserExperience(userId: String!, amountToCredit: Int!): User
+    creditHeroExperience(heroId: String!, amountToCredit: Int!): Hero
   }
 `
 
@@ -108,7 +112,8 @@ const resolvers = {
       }),
     levelTiers: async (_, ___, context: IApolloContext, __) => {
       const service = new ExperienceService(context.dataSources.store.prisma)
-      return await service.getLevelTiers()
+      // TODO: Filter me
+      return await service.getLevelTiers(LevelType.User)
     }
   },
   Mutation: {
@@ -151,6 +156,15 @@ const resolvers = {
     ) => {
       const service = new ExperienceService(context.dataSources.store.prisma)
       return await service.creditUserExperience({ userId, amountToCredit })
+    },
+    creditHeroExperience: async (
+      _,
+      { heroId, amountToCredit },
+      context: IApolloContext,
+      __
+    ) => {
+      const service = new ExperienceService(context.dataSources.store.prisma)
+      return await service.creditHeroExperience({ heroId, amountToCredit })
     }
   }
 }

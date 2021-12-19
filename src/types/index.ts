@@ -40,3 +40,8 @@ export interface IApolloContext {
     store: Store
   }
 }
+
+export enum LevelType {
+  User = 1,
+  Hero = 2
+}

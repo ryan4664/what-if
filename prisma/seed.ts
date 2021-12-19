@@ -10,6 +10,7 @@ import { UserService } from '../src/services/UserService'
 import { ExperienceService } from '../src/services/ExperienceService'
 import { HeroService } from '../src/services/HeroService'
 import { AttributeService } from '../src/services/AttributeService'
+import { LevelType } from '../src/types/index'
 
 const prisma = new PrismaClient()
 
@@ -54,12 +55,23 @@ async function main() {
   const levels = [1, 2, 3, 4, 5]
 
   const levelPromises = levels.map(async (x) => {
-    const minXp = x ** 3 * 1000
+    const minUserXp = x ** 3 * 10000
 
     await prisma.levelTier.create({
       data: {
         level: x,
-        minExperience: x === 1 ? 0 : minXp
+        minExperience: x === 1 ? 0 : minUserXp,
+        type: LevelType.User
+      }
+    })
+
+    const minHeroXp = x ** 3 * 1000
+
+    await prisma.levelTier.create({
+      data: {
+        level: x,
+        minExperience: x === 1 ? 0 : minHeroXp,
+        type: LevelType.Hero
       }
     })
   })
