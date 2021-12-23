@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Attribute, Hero, HeroAttribute, PrismaClient } from '@prisma/client'
 import { DataSource } from 'apollo-datasource'
 
 export class Store extends DataSource {
@@ -44,4 +44,10 @@ export interface IApolloContext {
 export enum LevelType {
   User = 1,
   Hero = 2
+}
+
+export interface HeroWithAttributes extends Hero {
+  heroAttributes: (HeroAttribute & {
+    attriubute: Attribute
+  })[]
 }

@@ -67,14 +67,16 @@ model LevelTier {
 }
 
 model PlayerVsPlayerCombatResult {
-  id            String   @id @default(uuid())
-  heroOneId     String   @db.Uuid
-  heroTwoId     String   @db.Uuid
-  combatDate    DateTime @default(now()) @db.Date
-  winningHeroId String?  @db.Uuid
-  log           Json?    @db.Json
-  heroOne       Hero     @relation(fields: [heroOneId], references: [id], name: "HeroOneRelation")
-  heroTwo       Hero     @relation(fields: [heroTwoId], references: [id], name: "HeroTwoRelation")
+  id            String    @id @default(uuid())
+  heroOneId     String    @db.Uuid
+  heroTwoId     String    @db.Uuid
+  combatDate    DateTime? @default(now()) @db.Date
+  winningHeroId String?   @db.Uuid
+  losingHeroId  String?   @db.Uuid
+  isDraw        Boolean   @default(false) @db.Boolean
+  log           Json?     @db.Json
+  heroOne       Hero      @relation(fields: [heroOneId], references: [id], name: "HeroOneRelation")
+  heroTwo       Hero      @relation(fields: [heroTwoId], references: [id], name: "HeroTwoRelation")
 }
 
 model TransactionHistory {
