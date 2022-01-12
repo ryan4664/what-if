@@ -1,6 +1,16 @@
 import { Attribute, Hero, PrismaClient } from '@prisma/client'
 import { Random } from 'random-js'
+import { ExperienceService } from './ExperienceService'
 import { HeroService } from './HeroService'
+
+export interface ICombatResult {
+  heroOneId: string
+  heroTwoId: string
+  winningHeroId: string | null
+  losingHeroId: string | null
+  isDraw: boolean
+  log: any
+}
 
 export class CombatService {
   prisma: PrismaClient
@@ -9,7 +19,10 @@ export class CombatService {
     this.prisma = prisma
   }
 
-  public oneOnOnePVP = async ({ heroOneId, heroTwoId }): Promise<any> => {
+  public oneOnOnePVP = async ({
+    heroOneId,
+    heroTwoId
+  }): Promise<ICombatResult> => {
     const heroService = new HeroService(this.prisma)
 
     const heroOne = await heroService.findById(heroOneId)
@@ -19,6 +32,7 @@ export class CombatService {
       throw new Error('Unable to find both heros, exiting combat')
     }
 
+    // TODO: Type this
     const battleLog: any[] = []
 
     const random = new Random()
@@ -88,13 +102,63 @@ export class CombatService {
 
     let winningHeroId: string | null = null
     let losingHeroId: string | null = null
+    let winningUserId: string | null = null
+    let losingUserId: string | null = null
 
     if (playerOneWins) {
       winningHeroId = heroOne.id
+      winningUserId = heroOne.userId
       losingHeroId = heroTwo.id
+      losingUserId = heroTwo.userId
     } else if (playerTwoWins) {
       winningHeroId = heroTwo.id
+      winningUserId = heroTwo.userId
       losingHeroId = heroOne.id
+      losingUserId = heroOne.userId
+    }
+
+    await this.prisma.playerVsPlayerCombatResult.create({
+      data: {
+        heroOneId: heroOne.id,
+        heroTwoId: heroTwo.id,
+        winningHeroId,
+        losingHeroId,
+        isDraw: winningHeroId === null,
+        log: battleLog
+      }
+    })
+
+    const isDraw = winningHeroId === null
+
+    // TODO: Break out into own, testable function
+    const experienceService = new ExperienceService(this.prisma)
+
+    let awardedExperience = random.integer(1000, 10000)
+
+    if (isDraw) {
+      console.log('updating')
+      await Promise.all([
+        await experienceService.creditUserExperience({
+          userId: heroOne.userId,
+          amountToCredit: awardedExperience
+        }),
+        await experienceService.creditUserExperience({
+          userId: heroTwo.userId,
+          amountToCredit: awardedExperience
+        })
+      ])
+    } else {
+      await experienceService.creditUserExperience({
+        userId: winningUserId!,
+        amountToCredit: awardedExperience
+      })
+
+      awardedExperience /= 2
+
+      await experienceService.creditUserExperience({
+        userId: losingUserId!,
+        amountToCredit: awardedExperience
+      })
     }
 
     return {
@@ -102,23 +166,9 @@ export class CombatService {
       heroTwoId: heroTwo.id,
       winningHeroId,
       losingHeroId,
-      isDraw: winningHeroId === null,
+      isDraw,
       log: battleLog
     }
-
-    // await this.prisma.playerVsPlayerCombatResult.create({
-    //   data: {
-    //     heroOneId: heroOne.id,
-    //     heroTwoId: heroTwo.id,
-    //     winningHeroId,
-    //     losingHeroId,
-    //     isDraw: winningHeroId === null,
-    //     log: battleLog
-    //   }
-    // })
-
-    // const experienceService = new ExperienceService(this.prisma)
-
     // Would be cool to use websockets here to send updates to the UI
     // so a use could "watch" combat
   }

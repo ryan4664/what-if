@@ -20,18 +20,15 @@ export class HeroService {
             attriubute: true
           }
         }
-      }
+      },
+      where: {}
     }
 
     if (heroIds?.length) {
-      arg = {
-        // @ts-ignore
-        where: {
-          id: {
-            in: heroIds
-          }
-        },
-        ...arg
+      arg.where = {
+        id: {
+          in: heroIds
+        }
       }
     }
 

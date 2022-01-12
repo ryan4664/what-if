@@ -299,6 +299,8 @@ test('should gain experience and hit max level ', async () => {
 
 test('should gain experience but not level up ', async () => {
   const hero = heroFactory.build()
+
+  hero.id
   mockCtx.prisma.hero.findUnique.mockResolvedValue(hero)
 
   mockCtx.prisma.levelTier.findMany.mockResolvedValue([
