@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import './App.css'
+import { ChakraProvider } from '@chakra-ui/react'
 
 const GET_USERS = gql`
   query GetUsers {
@@ -27,16 +28,12 @@ const GET_USERS = gql`
 function App() {
   const { loading, error, data } = useQuery(GET_USERS)
 
-  console.log(loading)
-  console.log(error)
-  console.log(data)
-
   return (
-    <div className="App">
+    <ChakraProvider>
       <header className="App-header">
         <p>Why the fuck not!</p>
       </header>
-    </div>
+    </ChakraProvider>
   )
 }
 
