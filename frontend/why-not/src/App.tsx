@@ -8,6 +8,7 @@ import {
   Link
 } from "react-router-dom";
 import LoginPage from "./pages/login/Login";
+import LandingPage from "./pages/landing/LandingPage";
 import UnauthenticatedHeader from "./components/UnauthenticatedHeader";
 
 const GET_USERS = gql`
@@ -59,9 +60,15 @@ function App() {
     <Router>
       <ChakraProvider theme={theme}>
         <Flex flexDir={'column'} m={0} p={0} minW="100vw" minH="100vh" bgColor="brand.500">
-          <UnauthenticatedHeader />
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={
+              <>
+                <UnauthenticatedHeader />
+                <LoginPage />
+              </>
+            }
+            />
           </Routes>
         </Flex>
       </ChakraProvider>
