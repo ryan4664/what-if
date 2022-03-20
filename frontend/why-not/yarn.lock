@@ -929,6 +929,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@fontsource/caveat@^4.5.3":
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/@fontsource/caveat/-/caveat-4.5.3.tgz#f7ffda9350a762f6135ebc8d43e13e4cf9da3f08"
+  integrity sha512-CbHbmQLVrQPvDGKMKDwVcm9qM2DjymOMroi0bwwHS3D5uWMgtBLUh26kmHOUlwpiHvdqR1MqEkU9WbBN4FSQ0Q==
+
 "@graphql-typed-document-node/core@^3.0.0":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"

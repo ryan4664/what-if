@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import './App.css'
-import { ChakraProvider, Container, extendTheme } from '@chakra-ui/react'
+import { Box, ChakraProvider, Container, extendTheme, Flex } from '@chakra-ui/react'
 import {
   BrowserRouter as Router,
   Route,
@@ -8,6 +8,7 @@ import {
   Link
 } from "react-router-dom";
 import LoginPage from "./pages/login/Login";
+import UnauthenticatedHeader from "./components/UnauthenticatedHeader";
 
 const GET_USERS = gql`
   query GetUsers {
@@ -37,10 +38,19 @@ function App() {
 
   const colors = {
     brand: {
-      900: '#1a365d',
-      800: '#153e75',
-      700: '#7d24e2',
+      900: '#20106A',
+      800: '#301C80',
+      700: '#472C9F',
+      600: '#6140BE',
+      500: '#7F58DE',
+      400: '#A280EB',
+      300: '#BB9CF5',
+      200: '#D6BEFB',
+      100: '#F3D4FF',
     },
+    fonts: {
+      body: 'Caveat'
+    }
   }
 
   const theme = extendTheme({ colors })
@@ -48,11 +58,12 @@ function App() {
   return (
     <Router>
       <ChakraProvider theme={theme}>
-        <Container minW="100vw" minH="100vh" bgColor="brand.700">
+        <Flex flexDir={'column'} m={0} p={0} minW="100vw" minH="100vh" bgColor="brand.500">
+          <UnauthenticatedHeader />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
           </Routes>
-        </Container>
+        </Flex>
       </ChakraProvider>
     </Router>
   )
