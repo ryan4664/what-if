@@ -1,7 +1,4 @@
-import { Box, Container, Flex, Text } from "@chakra-ui/react"
-
-import { useFormik } from "formik";
-import LoginForm from "./components/LoginForm";
+import { Flex, Text } from "@chakra-ui/react"
 
 
 const LandingPage = () => {

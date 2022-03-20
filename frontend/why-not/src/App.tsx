@@ -37,6 +37,8 @@ const GET_USERS = gql`
 function App() {
   const { loading, error, data } = useQuery(GET_USERS)
 
+  console.log(data)
+
   const colors = {
     brand: {
       900: '#20106A',
@@ -63,6 +65,13 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={
+              <>
+                <UnauthenticatedHeader />
+                <LoginPage />
+              </>
+            }
+            />
+            <Route path="/signup" element={
               <>
                 <UnauthenticatedHeader />
                 <LoginPage />
