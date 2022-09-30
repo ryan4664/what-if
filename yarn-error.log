@@ -1,20 +1,20 @@
 Arguments: 
-  /usr/local/bin/node /opt/yarn-v1.22.15/bin/yarn.js
+  /home/ryan/.nvm/versions/node/v17.7.2/bin/node /home/ryan/.nvm/versions/node/v17.7.2/bin/yarn
 
 PATH: 
-  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  /home/ryan/.rvm/gems/ruby-3.0.0/bin:/home/ryan/.rvm/gems/ruby-3.0.0@global/bin:/home/ryan/.rvm/rubies/ruby-3.0.0/bin:/home/ryan/.nvm/versions/node/v17.7.2/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/Go/bin:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/mnt/c/Users/ryan/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/ryan/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/ryan/go/bin:/mnt/c/Program Files/JetBrains/IntelliJ IDEA 2022.2.2/bin:/mnt/c/Users/ryan/AppData/Local/JetBrains/Toolbox/scripts:/usr/local/go-1.18.1/bin:/home/ryan/projects/go/bin:/home/ryan/.rvm/bin
 
 Yarn version: 
-  1.22.15
+  1.22.17
 
 Node version: 
-  16.11.1
+  17.7.2
 
 Platform: 
   linux x64
 
 Trace: 
-  Error: EEXIST: file already exists, symlink '../../../parser/bin/babel-parser.js' -> '/app/node_modules/@babel/core/node_modules/.bin/parser'
+  Error: EACCES: permission denied, unlink '/home/ryan/code/why-not/node_modules/.yarn-integrity'
 
 npm manifest: 
   {
@@ -44,13 +44,14 @@ npm manifest:
       "eslint-plugin-import": "^2.22.1",
       "eslint-plugin-node": "^11.1.0",
       "eslint-plugin-promise": "^4.2.1",
+      "fishery": "^2.1.0",
       "nodemon": "^1.17.2",
       "prettier": "2.4.1",
       "prism": "^4.1.2",
       "typescript": "^4.4.3"
     },
     "dependencies": {
-      "@prisma/client": "^3.2.1",
+      "@prisma/client": "^4.4.0",
       "@types/bcryptjs": "^2.4.2",
       "@types/jest": "^27.0.2",
       "@types/jsonwebtoken": "^8.5.5",
@@ -2698,6 +2699,13 @@ Lockfile:
       locate-path "^5.0.0"
       path-exists "^4.0.0"
   
+  fishery@^2.1.0:
+    version "2.1.0"
+    resolved "https://registry.yarnpkg.com/fishery/-/fishery-2.1.0.tgz#6472582fd0f305530f789ef291adf2e550ef7704"
+    integrity sha512-CGXNmOkth/Je/oIM5UqB4TKz2p9A/GrappTw8nEOCy50vqx18S51jp4OARRPfxofhSx3ihZwI6t3wh+SA5mz4A==
+    dependencies:
+      lodash.mergewith "^4.6.2"
+  
   flat-cache@^3.0.4:
     version "3.0.4"
     resolved "https://registry.npmjs.org/flat-cache/-/flat-cache-3.0.4.tgz"
@@ -4190,6 +4198,11 @@ Lockfile:
     version "4.6.2"
     resolved "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz"
     integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
+  
+  lodash.mergewith@^4.6.2:
+    version "4.6.2"
+    resolved "https://registry.yarnpkg.com/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz#617121f89ac55f59047c7aec1ccd6654c6590f55"
+    integrity sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==
   
   lodash.once@^4.0.0:
     version "4.1.1"
