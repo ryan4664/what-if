@@ -34,7 +34,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Why the fuck not!</p>
+        <p>why not</p>
       </header>
     </div>
   )
