@@ -1,5 +1,15 @@
 import { gql, useQuery } from '@apollo/client'
 import './App.css'
+import { Box, ChakraProvider, Container, extendTheme, Flex } from '@chakra-ui/react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link
+} from "react-router-dom";
+import LoginPage from "./pages/login/Login";
+import LandingPage from "./pages/landing/LandingPage";
+import UnauthenticatedHeader from "./components/UnauthenticatedHeader";
 
 const GET_USERS = gql`
   query GetUsers {
@@ -27,16 +37,51 @@ const GET_USERS = gql`
 function App() {
   const { loading, error, data } = useQuery(GET_USERS)
 
-  console.log(loading)
-  console.log(error)
-  console.log(data)
+  console.log("RYANTEST", data, loading, error)
+
+  const colors = {
+    brand: {
+      900: '#20106A',
+      800: '#301C80',
+      700: '#472C9F',
+      600: '#6140BE',
+      500: '#7F58DE',
+      400: '#A280EB',
+      300: '#BB9CF5',
+      200: '#D6BEFB',
+      100: '#F3D4FF',
+    },
+    fonts: {
+      body: 'Caveat'
+    }
+  }
+
+  const theme = extendTheme({ colors })
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>why not</p>
-      </header>
-    </div>
+    <Router>
+      <ChakraProvider theme={theme}>
+        <Flex flexDir={'column'} m={0} p={0} minW="100vw" minH="100vh" bgColor="brand.500">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={
+              <>
+                <UnauthenticatedHeader />
+                <LoginPage />
+              </>
+            }
+            />
+            <Route path="/signup" element={
+              <>
+                <UnauthenticatedHeader />
+                <LoginPage />
+              </>
+            }
+            />
+          </Routes>
+        </Flex>
+      </ChakraProvider>
+    </Router>
   )
 }
 
