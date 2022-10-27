@@ -12,12 +12,12 @@ beforeEach(() => {
   heroService = new HeroService(mockCtx.prisma)
 })
 
-test('should return no heros ', async () => {
+test('should return no heroes ', async () => {
   const result = await heroService.getHeros()
   expect(result.length).toEqual(0)
 })
 
-test('should return some heros ', async () => {
+test('should return some heroes ', async () => {
   const user = userFactory.build()
 
   const hero = heroFactory.build({ userId: user.id })

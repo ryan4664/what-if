@@ -1,7 +1,8 @@
 import { Hero, Prisma, PrismaClient } from '@prisma/client'
 import { v1 as uuidv1 } from 'uuid'
-import { TimeShardService, TransactionTypeEnum } from './TimeShardService'
 import { UserService } from './UserService'
+import { TimeShardService } from './'
+import { TransactionTypeEnum } from './types'
 
 // Store somewhere?
 export const HERO_PRICE_IN_TIME_SHARDS = 100
@@ -109,7 +110,7 @@ export class HeroService {
 
     await timeShardService.debitAccount({
       userId,
-      amount: HERO_PRICE_IN_TIME_SHARDS,
+      amountToDebit: HERO_PRICE_IN_TIME_SHARDS,
       transactionType: TransactionTypeEnum.heroPurchaseDebit
     })
 

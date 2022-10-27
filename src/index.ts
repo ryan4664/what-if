@@ -61,7 +61,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    heros: [Hero!]!
+    heroes: [Hero!]!
     attributes: [Attribute!]!
     user(userId: ID!): User
     currentUser: User
@@ -82,7 +82,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    heros: async (_, ___, context: IApolloContext, __) => {
+    heroes: async (_, ___, context: IApolloContext, __) => {
       const service = new HeroService(context.dataSources.store.prisma)
       return await service.getHeros()
     },

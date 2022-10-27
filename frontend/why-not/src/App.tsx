@@ -37,8 +37,6 @@ const GET_USERS = gql`
 function App() {
   const { loading, error, data } = useQuery(GET_USERS)
 
-  console.log("RYANTEST", data, loading, error)
-
   const colors = {
     brand: {
       900: '#20106A',
