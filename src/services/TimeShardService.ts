@@ -36,7 +36,6 @@ export class TimeShardService {
         const userService = new UserService(this.prisma)
 
         const user = await userService.findUserById(userId)
-        console.log("HERE3", user)
 
         if (user == null) {
             throw new Error('User not found')
@@ -62,7 +61,6 @@ export class TimeShardService {
 
         const user = await userService.findUserById(userId)
 
-        console.log("HERE1", user)
         if (user == null) {
             throw new Error('User not found')
         }
@@ -78,8 +76,6 @@ export class TimeShardService {
             transactionType,
         })
 
-        console.log("HERE2", user)
-
         await this.prisma.user.update({
             where: {
                 id: user.id,
@@ -94,11 +90,11 @@ export class TimeShardService {
 
     public creditAccount = async ({
                                       userId,
-                                      amount: amountToCredit,
+                                      amountToCredit,
                                       transactionType,
                                   }: {
         userId: string
-        amount: number
+        amountToCredit: number
         transactionType: TransactionTypeEnum
     }) => {
         const userService = new UserService(this.prisma)
@@ -128,9 +124,11 @@ export class TimeShardService {
                 timeShards: updatedAmount,
             },
         })
+
+        return await this.getUserBalance({ userId: user.id })
     }
 
-    public createTransactionHistoryItem = async ({
+    private createTransactionHistoryItem = async ({
                                                      userId,
                                                      previousTimeShards,
                                                      timeShardsDelta,
