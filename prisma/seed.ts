@@ -32,7 +32,7 @@ async function main() {
         { name: 'Hulk', ability: 'Big green monster', moveNames: ['Smash'] },
         { name: 'Wolverine', ability: 'Metal claws', moveNames: ['Slice', 'Stab'] },
         {
-            name: 'Capitan American',
+            name: 'Capitan America',
             ability: 'Super soldier',
             moveNames: ['Super punch'],
         },
@@ -115,7 +115,7 @@ async function main() {
             userId: user.id,
             previousTimeShards: user.timeShards,
             timeShardsDelta: 0,
-            transactionType: TransactionTypeEnum.testCredit,
+            transactionType: TransactionTypeEnum.credit,
             updatedTimeShards: user.timeShards,
         })
 
@@ -123,7 +123,7 @@ async function main() {
             userId: user.id,
             previousTimeShards: user.timeShards,
             timeShardsDelta: 0,
-            transactionType: TransactionTypeEnum.testDebit,
+            transactionType: TransactionTypeEnum.debit,
             updatedTimeShards: user.timeShards,
         })
     })

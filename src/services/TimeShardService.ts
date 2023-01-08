@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-import { UserService } from './UserService'
-import { TransactionTypeEnum, UserBalance } from './types'
+import {PrismaClient, TransactionHistory} from '@prisma/client'
+import {UserService} from './UserService'
+import {TransactionTypeEnum, UserBalance} from './types'
 
 // TODO: It would be cool to inject users into the context here
 export class TimeShardService {
@@ -14,7 +14,7 @@ export class TimeShardService {
                                                            userId,
                                                        }: {
         userId: string
-    }) => {
+    }): Promise<TransactionHistory[]> => {
         const userService = new UserService(this.prisma)
 
         const user = await userService.findUserById(userId)
@@ -23,11 +23,13 @@ export class TimeShardService {
             throw new Error('User not found')
         }
 
-        return await this.prisma.transactionHistory.findMany({
+        const result = await this.prisma.transactionHistory.findMany({
             where: {
                 userId,
             },
         })
+
+        return result
     }
 
     public getUserBalance = async ({
@@ -41,10 +43,24 @@ export class TimeShardService {
             throw new Error('User not found')
         }
 
-        // TODO: To be proper this should go through all transactions
+        const transactionHistory = await this.getTransactionHistoryItemsByUserId({userId})
+
+        const balance = transactionHistory.reduce(
+            (prev, curr) => {
+                if (curr.transactionType === TransactionTypeEnum.credit) {
+                    return prev + curr.timeShardsDelta
+                } else {
+                    return prev - curr.timeShardsDelta
+                }
+            },
+            0
+        );
+
+        // NOTE: Do we need the current balance on the user object?
+
         return {
             userId: user.id,
-            timeShardBalance: user.timeShards,
+            timeShardBalance: balance,
         }
     }
 
@@ -85,7 +101,7 @@ export class TimeShardService {
             },
         })
 
-        return await this.getUserBalance({ userId: user.id })
+        return await this.getUserBalance({userId: user.id})
     }
 
     public creditAccount = async ({
@@ -125,10 +141,10 @@ export class TimeShardService {
             },
         })
 
-        return await this.getUserBalance({ userId: user.id })
+        return await this.getUserBalance({userId: user.id})
     }
 
-    private createTransactionHistoryItem = async ({
+    public createTransactionHistoryItem = async ({
                                                      userId,
                                                      previousTimeShards,
                                                      timeShardsDelta,

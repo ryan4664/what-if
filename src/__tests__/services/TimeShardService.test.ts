@@ -21,10 +21,71 @@ let timeShardService: TimeShardService
 
 beforeEach(() => {
     mockCtx = createMockContext()
-    // @ts-ignore
-    mockCtx.prisma.user.findUnique.mockResolvedValue([])
+    mockCtx.prisma.user.findUnique.mockResolvedValue(null)
+    mockCtx.prisma.transactionHistory.findMany.mockResolvedValue([])
     timeShardService = new TimeShardService(mockCtx.prisma)
 })
+
+test('get user transaction history ', async () => {
+    const {id: userId} = userFactory.build()
+
+    await timeShardService.getTransactionHistoryItemsByUserId(
+        {
+            userId
+        })
+
+    expect(mockCtx.prisma.transactionHistory.findMany).toHaveBeenCalledWith({
+        where: {
+            userId,
+        },
+    })
+
+})
+
+describe('some test', () => {
+    beforeEach(() => {
+        mockCtx.prisma.transactionHistory.findMany.mockResolvedValue([
+            {
+                id: '1',
+                userId: 'userid',
+                previousTimeShards: 0,
+                timeShardsDelta: 20,
+                updatedTimeShards: 20,
+                transactionType: TransactionTypeEnum.credit
+            },
+            {
+                id: '2',
+                userId: 'userid',
+                previousTimeShards: 10,
+                timeShardsDelta: 10,
+                updatedTimeShards: 10,
+                transactionType: TransactionTypeEnum.debit
+            },
+            {
+                id: '3',
+                userId: 'userid',
+                previousTimeShards: 10,
+                timeShardsDelta: 10,
+                updatedTimeShards: 0,
+                transactionType: TransactionTypeEnum.debit
+            }
+        ])
+    })
+
+    test('get user balance ', async () => {
+        const {id: userId} = userFactory.build()
+
+        const result = await timeShardService.getUserBalance(
+            {
+                userId,
+            })
+
+
+        expect(result.userId).toEqual(userId)
+        expect(result.timeShardBalance).toEqual(0)
+    })
+})
+
 
 test('debit account ', async () => {
     const {id: userId} = userFactory.build()
@@ -35,7 +96,7 @@ test('debit account ', async () => {
         {
             userId,
             amountToDebit,
-            transactionType: TransactionTypeEnum.testDebit,
+            transactionType: TransactionTypeEnum.debit,
         })
 
 
@@ -49,7 +110,6 @@ test('debit account ', async () => {
             timeShards: 0,
         },
     })
-
 })
 
 test('credit account ', async () => {
@@ -61,7 +121,7 @@ test('credit account ', async () => {
         {
             userId,
             amountToCredit,
-            transactionType: TransactionTypeEnum.testDebit,
+            transactionType: TransactionTypeEnum.debit,
         })
 
 

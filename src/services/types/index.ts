@@ -1,7 +1,7 @@
 export enum TransactionTypeEnum {
-    testDebit = -2,
-    testCredit = -1,
-    heroPurchaseDebit = 1
+    heroPurchaseDebit = 1,
+    credit = 1,
+    debit = 2,
 }
 
 export interface UserBalance {
