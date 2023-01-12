@@ -21,12 +21,12 @@ const GET_USERS = gql`
       timeShards
       heros {
         id
-        multiverse
+        homeMultiverse
         name
         attributeName
         totalHealth
         currentHealth
-        speach
+        speech
         currentExperience
         currentLevel
       }

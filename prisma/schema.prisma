@@ -21,7 +21,7 @@ model User {
 
 model Hero {
   id                  String                       @id @default(uuid()) @db.Uuid
-  multiverse          String                       @unique @db.Uuid
+  homeMultiverse      String                       @unique @db.Uuid
   name                String                       @db.VarChar(250)
   userId              String                       @db.Uuid
   currentLevel        Int                          @default(1) @db.Integer
@@ -29,11 +29,25 @@ model Hero {
   totalHealth         Int                          @default(1) @db.Integer
   currentHealth       Int                          @default(1) @db.Integer
   speed               Int                          @default(1) @db.Integer
-  speach              Int                          @default(1) @db.Integer
+  speech              Int                          @default(1) @db.Integer
   user                User                         @relation(fields: [userId], references: [id])
   heroAttributes      HeroAttribute[]
   HeroOneCombatResult PlayerVsPlayerCombatResult[] @relation("HeroOneRelation")
   HeroTwoCombatResult PlayerVsPlayerCombatResult[] @relation("HeroTwoRelation")
+}
+
+model Villain {
+  id                String             @id @default(uuid()) @db.Uuid
+  homeMultiverse    String             @unique @db.Uuid
+  name              String             @db.VarChar(250)
+  userId            String             @db.Uuid
+  currentLevel      Int                @default(1) @db.Integer
+  currentExperience Int                @default(0) @db.Integer
+  totalHealth       Int                @default(1) @db.Integer
+  currentHealth     Int                @default(1) @db.Integer
+  speed             Int                @default(1) @db.Integer
+  speech            Int                @default(1) @db.Integer
+  villainAttributes VillainAttribute[]
 }
 
 model HeroAttribute {
@@ -41,22 +55,31 @@ model HeroAttribute {
   heroId      String    @db.Uuid
   attributeId String    @db.Uuid
   hero        Hero      @relation(fields: [heroId], references: [id])
-  attriubute  Attribute @relation(fields: [attributeId], references: [id])
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+}
+
+model VillainAttribute {
+  id          String    @id @default(uuid())
+  villainId   String    @db.Uuid
+  attributeId String    @db.Uuid
+  villain     Villain   @relation(fields: [villainId], references: [id])
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
 }
 
 model Attribute {
-  id             String          @id @default(uuid()) @db.Uuid
-  name           String          @db.VarChar(100)
-  baseDamage     Int             @default(1) @db.Integer
-  heroAttributes HeroAttribute[]
-  moves          AttributeMove[]
+  id                String             @id @default(uuid()) @db.Uuid
+  name              String             @db.VarChar(100)
+  baseDamage        Int                @default(1) @db.Integer
+  heroAttributes    HeroAttribute[]
+  villainAttributes VillainAttribute[]
+  moves             AttributeMove[]
 }
 
 model AttributeMove {
   id          String    @id @default(uuid()) @db.Uuid
   name        String    @default("DefaultMoveName") @db.VarChar(250)
   attributeId String    @db.Uuid
-  attriubute  Attribute @relation(fields: [attributeId], references: [id])
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
 }
 
 model LevelTier {

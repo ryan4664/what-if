@@ -48,6 +48,6 @@ export enum LevelType {
 
 export interface HeroWithAttributes extends Hero {
   heroAttributes: (HeroAttribute & {
-    attriubute: Attribute
+    attribute: Attribute
   })[]
 }

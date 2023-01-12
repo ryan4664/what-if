@@ -18,7 +18,7 @@ export class HeroService {
       include: {
         heroAttributes: {
           include: {
-            attriubute: true
+            attribute: true
           }
         }
       },
@@ -48,7 +48,7 @@ export class HeroService {
       include: {
         heroAttributes: {
           include: {
-            attriubute: true
+            attribute: true
           }
         }
       }
@@ -66,7 +66,7 @@ export class HeroService {
 
     const newHero: Prisma.HeroCreateInput = {
       name: name,
-      multiverse: uuidv1(),
+      homeMultiverse: uuidv1(),
       heroAttributes: {
         create: [
           {

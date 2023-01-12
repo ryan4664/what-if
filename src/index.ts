@@ -12,13 +12,13 @@ import { validateToken } from './util'
 const typeDefs = gql`
   type Hero {
     id: ID
-    multiverse: String
+    homeMultiverse: String
     name: String
     attributes: [HeroAttribute]!
     attributeName: String
     totalHealth: Int!
     currentHealth: Int!
-    speach: Int!
+    speech: Int!
     currentExperience: Int!
     currentLevel: Int!
   }

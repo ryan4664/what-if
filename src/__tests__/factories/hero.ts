@@ -11,7 +11,7 @@ export default Factory.define<HeroWithAttributes>(() => {
 
   return {
     id: heroId,
-    multiverse: uuidv4(),
+    homeMultiverse: uuidv4(),
     name: uuidv4(),
     userId: uuidv4(),
     currentLevel: 1,
@@ -19,14 +19,14 @@ export default Factory.define<HeroWithAttributes>(() => {
     totalHealth: 20,
     currentHealth: 20,
     speed: 100,
-    speach: 100,
+    speech: 100,
     user: null,
     heroAttributes: [
       {
         id: uuidv4(),
         attributeId: attributeId,
         heroId: heroId,
-        attriubute: {
+        attribute: {
           id: uuidv4(),
           name: random.string(5),
           baseDamage: random.integer(1, 100)

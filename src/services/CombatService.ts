@@ -49,12 +49,12 @@ export class CombatService {
       const heroOneAttribute =
         heroOne.heroAttributes[
           random.integer(0, heroOne.heroAttributes.length - 1)
-        ].attriubute
+        ].attribute
 
       const heroTwoAttribute =
         heroTwo.heroAttributes[
           random.integer(0, heroTwo.heroAttributes.length - 1)
-        ].attriubute
+        ].attribute
 
       if (heroOneRoll > heroTwoRoll) {
         const attackResult = this.attack(
