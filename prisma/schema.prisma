@@ -50,6 +50,24 @@ model Villain {
   villainAttributes VillainAttribute[]
 }
 
+// This should only ever have one single value,
+// making a table for this seems strange,
+// this should be in redis or something,
+// lots of people would be reading and
+// writing to this a lot
+model Watcher {
+  id             String                  @id @default(uuid()) @db.Uuid
+  timeShards     Int                     @default(0) @db.Integer
+  timeShardGoals WatcherTimeShardGoals[]
+}
+
+model WatcherTimeShardGoals {
+  id                 String  @id @default(uuid()) @db.Uuid
+  timeShardsRequired Int     @default(0) @db.Integer
+  watcherId          String  @db.Uuid
+  watcher            Watcher @relation(fields: [watcherId], references: [id])
+}
+
 model HeroAttribute {
   id          String    @id @default(uuid())
   heroId      String    @db.Uuid
