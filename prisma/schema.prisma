@@ -64,6 +64,7 @@ model Watcher {
 model WatcherTimeShardGoals {
   id                 String  @id @default(uuid()) @db.Uuid
   timeShardsRequired Int     @default(0) @db.Integer
+  isUnlocked        Boolean @default(false) @db.Boolean
   watcherId          String  @db.Uuid
   watcher            Watcher @relation(fields: [watcherId], references: [id])
 }
