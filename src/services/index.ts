@@ -7,13 +7,12 @@ import { TimeShardService } from './TimeShardService'
 import { UserService } from './UserService'
 
 
-
 export {
-    AttributeService,
-    AuthService,
-    CombatService,
-    ExperienceService,
-    HeroService,
-    TimeShardService,
-    UserService
+	AttributeService,
+	AuthService,
+	CombatService,
+	ExperienceService,
+	HeroService,
+	TimeShardService,
+	UserService
 }

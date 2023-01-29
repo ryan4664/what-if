@@ -131,7 +131,7 @@ async function main() {
     await Promise.all(inserts)
 
     const [heros, attributes] = await Promise.all([
-        await heroService.getHeros(),
+        await heroService.getHeroes(),
         await attributeService.getAttributes(),
     ])
 

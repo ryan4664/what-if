@@ -4,176 +4,176 @@ import { HeroService } from './HeroService'
 import { UserService } from './UserService'
 
 export class ExperienceService {
-  prisma: PrismaClient
+	prisma: PrismaClient
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma
-  }
+	constructor(prisma: PrismaClient) {
+		this.prisma = prisma
+	}
 
-  public getLevelTiers = async (type: LevelType): Promise<LevelTier[]> => {
-    return await this.prisma.levelTier.findMany({
-      where: {
-        type: type
-      },
-      orderBy: [
-        {
-          minExperience: 'asc'
-        }
-      ]
-    })
-  }
+	public getLevelTiers = async (type: LevelType): Promise<LevelTier[]> => {
+		return this.prisma.levelTier.findMany({
+			where: {
+				type: type
+			},
+			orderBy: [
+				{
+					minExperience: 'asc'
+				}
+			]
+		})
+	}
 
-  private creditUserLevel = async (
-    user: User,
-    amountToCredit: number
-  ): Promise<User> => {
-    return await this.prisma.user.update({
-      data: {
-        currentLevel: user.currentLevel + amountToCredit
-      },
-      where: {
-        id: user.id
-      }
-    })
-  }
+	public creditUserExperience = async ({
+																				 userId,
+																				 amountToCredit
+																			 }: {
+		userId: string
+		amountToCredit: number
+	}): Promise<User | null> => {
+		const userService = new UserService(this.prisma)
 
-  private creditHeroLevel = async (
-    hero: Hero,
-    amountToCredit: number
-  ): Promise<Hero> => {
-    return await this.prisma.hero.update({
-      data: {
-        currentLevel: hero.currentLevel + amountToCredit
-      },
-      where: {
-        id: hero.id
-      }
-    })
-  }
+		const user = await userService.findUserById(userId)
 
-  public creditUserExperience = async ({
-    userId,
-    amountToCredit
-  }: {
-    userId: string
-    amountToCredit: number
-  }): Promise<User | null> => {
-    const userService = new UserService(this.prisma)
+		if (user == null) {
+			throw new Error('User not found')
+		}
+		const previousExperience = user.currentExperience
+		let updatedExperience = previousExperience + amountToCredit
 
-    const user = await userService.findUserById(userId)
+		const levelTiers = await this.getLevelTiers(LevelType.User)
 
-    if (user == null) {
-      throw new Error('User not found')
-    }
-    const previousExperience = user.currentExperience
-    let updatedExperience = previousExperience + amountToCredit
+		let nextLevelTier = levelTiers.find(
+			(x) => x.level === user!.currentLevel + 1
+		)
 
-    const levelTiers = await this.getLevelTiers(LevelType.User)
+		let shouldLevelUp =
+			nextLevelTier && updatedExperience >= nextLevelTier.minExperience
+		let levelsToCredit = 0
 
-    let nextLevelTier = levelTiers.find(
-      (x) => x.level === user!.currentLevel + 1
-    )
+		while (shouldLevelUp) {
+			levelsToCredit += 1
+			nextLevelTier = levelTiers.find(
+				(x) => x.level === user.currentLevel + levelsToCredit + 1
+			)
 
-    let shouldLevelUp =
-      nextLevelTier && updatedExperience >= nextLevelTier.minExperience
-    let levelsToCredit = 0
+			if (!nextLevelTier) {
+				shouldLevelUp = false
+			} else {
+				user.currentExperience = updatedExperience - nextLevelTier.minExperience
+				if (user.currentExperience < 0) {
+					shouldLevelUp = false
+				}
+			}
+		}
 
-    while (shouldLevelUp) {
-      levelsToCredit += 1
-      nextLevelTier = levelTiers.find(
-        (x) => x.level === user.currentLevel + levelsToCredit + 1
-      )
+		if (levelsToCredit > 0) {
+			await this.creditUserLevel(user, levelsToCredit)
+		}
 
-      if (!nextLevelTier) {
-        shouldLevelUp = false
-      } else {
-        user.currentExperience = updatedExperience - nextLevelTier.minExperience
-        if (user.currentExperience < 0) {
-          shouldLevelUp = false
-        }
-      }
-    }
+		const lastLevelTier = levelTiers[levelTiers.length - 1]
 
-    if (levelsToCredit > 0) {
-      await this.creditUserLevel(user, levelsToCredit)
-    }
+		if (updatedExperience > lastLevelTier.minExperience) {
+			updatedExperience = lastLevelTier.minExperience
+		}
 
-    const lastLevelTier = levelTiers[levelTiers.length - 1]
+		return this.prisma.user.update({
+			data: {
+				currentExperience: updatedExperience
+			},
+			where: {
+				id: userId
+			}
+		})
+	}
 
-    if (updatedExperience > lastLevelTier.minExperience) {
-      updatedExperience = lastLevelTier.minExperience
-    }
+	public creditHeroExperience = async ({
+																				 heroId,
+																				 amountToCredit
+																			 }: {
+		heroId: string
+		amountToCredit: number
+	}): Promise<Hero | null> => {
+		const heroService = new HeroService(this.prisma)
 
-    return await this.prisma.user.update({
-      data: {
-        currentExperience: updatedExperience
-      },
-      where: {
-        id: userId
-      }
-    })
-  }
+		const hero = await heroService.findById(heroId)
 
-  public creditHeroExperience = async ({
-    heroId,
-    amountToCredit
-  }: {
-    heroId: string
-    amountToCredit: number
-  }): Promise<Hero | null> => {
-    const heroService = new HeroService(this.prisma)
+		if (hero == null) {
+			throw new Error('Hero not found')
+		}
+		const previousExperience = hero.currentExperience
+		let updatedExperience = previousExperience + amountToCredit
 
-    const hero = await heroService.findById(heroId)
+		const levelTiers = await this.getLevelTiers(LevelType.Hero)
 
-    if (hero == null) {
-      throw new Error('Hero not found')
-    }
-    const previousExperience = hero.currentExperience
-    let updatedExperience = previousExperience + amountToCredit
+		let nextLevelTier = levelTiers.find(
+			(x) => x.level === hero!.currentLevel + 1
+		)
 
-    const levelTiers = await this.getLevelTiers(LevelType.Hero)
+		let shouldLevelUp =
+			nextLevelTier && updatedExperience >= nextLevelTier.minExperience
+		let levelsToCredit = 0
 
-    let nextLevelTier = levelTiers.find(
-      (x) => x.level === hero!.currentLevel + 1
-    )
+		while (shouldLevelUp) {
+			levelsToCredit += 1
+			nextLevelTier = levelTiers.find(
+				(x) => x.level === hero.currentLevel + levelsToCredit + 1
+			)
 
-    let shouldLevelUp =
-      nextLevelTier && updatedExperience >= nextLevelTier.minExperience
-    let levelsToCredit = 0
+			if (!nextLevelTier) {
+				shouldLevelUp = false
+			} else {
+				hero.currentExperience = updatedExperience - nextLevelTier.minExperience
+				if (hero.currentExperience < 0) {
+					shouldLevelUp = false
+				}
+			}
+		}
 
-    while (shouldLevelUp) {
-      levelsToCredit += 1
-      nextLevelTier = levelTiers.find(
-        (x) => x.level === hero.currentLevel + levelsToCredit + 1
-      )
+		if (levelsToCredit > 0) {
+			await this.creditHeroLevel(hero, levelsToCredit)
+		}
 
-      if (!nextLevelTier) {
-        shouldLevelUp = false
-      } else {
-        hero.currentExperience = updatedExperience - nextLevelTier.minExperience
-        if (hero.currentExperience < 0) {
-          shouldLevelUp = false
-        }
-      }
-    }
+		const lastLevelTier = levelTiers[levelTiers.length - 1]
 
-    if (levelsToCredit > 0) {
-      await this.creditHeroLevel(hero, levelsToCredit)
-    }
+		if (updatedExperience > lastLevelTier.minExperience) {
+			updatedExperience = lastLevelTier.minExperience
+		}
 
-    const lastLevelTier = levelTiers[levelTiers.length - 1]
+		return this.prisma.hero.update({
+			data: {
+				currentExperience: updatedExperience
+			},
+			where: {
+				id: heroId
+			}
+		})
+	}
 
-    if (updatedExperience > lastLevelTier.minExperience) {
-      updatedExperience = lastLevelTier.minExperience
-    }
+	private creditUserLevel = async (
+		user: User,
+		amountToCredit: number
+	): Promise<User> => {
+		return this.prisma.user.update({
+			data: {
+				currentLevel: user.currentLevel + amountToCredit
+			},
+			where: {
+				id: user.id
+			}
+		})
+	}
 
-    return await this.prisma.hero.update({
-      data: {
-        currentExperience: updatedExperience
-      },
-      where: {
-        id: heroId
-      }
-    })
-  }
+	private creditHeroLevel = async (
+		hero: Hero,
+		amountToCredit: number
+	): Promise<Hero> => {
+		return this.prisma.hero.update({
+			data: {
+				currentLevel: hero.currentLevel + amountToCredit
+			},
+			where: {
+				id: hero.id
+			}
+		})
+	}
 }

@@ -3,16 +3,16 @@ import { mockDeep } from 'jest-mock-extended'
 import { DeepMockProxy } from 'jest-mock-extended/lib/cjs/Mock'
 
 export type Context = {
-  prisma: PrismaClient
+	prisma: PrismaClient
 }
 
 export type MockContext = {
-  prisma: DeepMockProxy<PrismaClient>
+	prisma: DeepMockProxy<PrismaClient>
 }
 
 export const createMockContext = (): MockContext => {
-  return {
-    // @ts-ignore
-    prisma: mockDeep<PrismaClient>()
-  }
+	return {
+		// @ts-ignore
+		prisma: mockDeep<PrismaClient>()
+	}
 }

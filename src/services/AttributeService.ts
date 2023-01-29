@@ -1,12 +1,13 @@
 import { Attribute, PrismaClient } from '.prisma/client'
+
 export class AttributeService {
-  prisma: PrismaClient
+	prisma: PrismaClient
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma
-  }
+	constructor(prisma: PrismaClient) {
+		this.prisma = prisma
+	}
 
-  public getAttributes = async (): Promise<Attribute[]> => {
-    return await this.prisma.attribute.findMany()
-  }
+	public getAttributes = async (): Promise<Attribute[]> => {
+		return this.prisma.attribute.findMany()
+	}
 }

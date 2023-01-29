@@ -40,7 +40,6 @@ model Villain {
   id                String             @id @default(uuid()) @db.Uuid
   homeMultiverse    String             @unique @db.Uuid
   name              String             @db.VarChar(250)
-  userId            String             @db.Uuid
   currentLevel      Int                @default(1) @db.Integer
   currentExperience Int                @default(0) @db.Integer
   totalHealth       Int                @default(1) @db.Integer
